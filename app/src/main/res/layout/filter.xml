@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Top Bar -->
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="@color/white">
+
+        <!-- Back Arrow -->
+        <ImageView
+            android:id="@+id/backArrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/back_gray"
+            android:contentDescription="Back"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filter Issues"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
+
+        <!-- Profile Icon -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgProfile"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/profile"
+            android:scaleType="centerCrop"
+            android:contentDescription="Profile"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+    </RelativeLayout>
+
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/blue_primary">
+
+        <LinearLayout
+            android:id="@+id/homeLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/home_white"
+                android:contentDescription="Home"
+                android:layout_marginTop="-8dp"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textColor="@color/white"
+                android:textSize="8dp"
+                android:gravity="center"
+                android:layout_marginTop="-15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/filterLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/filter_white"
+                android:contentDescription="Filter"
+                android:layout_marginTop="-8dp"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filter"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                android:gravity="center"
+                android:layout_marginTop="-15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/raiseIssueLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/add_icon"
+                android:contentDescription="Raise Issue"
+                android:layout_marginTop="-8dp"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Report"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                android:gravity="center"
+                android:layout_marginTop="-15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/myNotificationLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/notification_white"
+                android:contentDescription="My Notification"
+                android:layout_marginTop="-8dp"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notification"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                android:gravity="center"
+                android:layout_marginTop="-15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/settingLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/setting_white"
+                android:contentDescription="Settings"
+                android:layout_marginTop="-8dp"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Setting"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                android:gravity="center"
+                android:layout_marginTop="-15dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Filter Section -->
+    <LinearLayout
+        android:id="@+id/filterSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topBar"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="12dp"
+        android:background="@color/white">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/filter_gray"
+            android:contentDescription="Filters"
+            android:layout_marginEnd="8dp" />
+
+        <AutoCompleteTextView
+            android:id="@+id/filterDistrict"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="District"
+            android:text="Bharatpur"
+            android:textSize="15dp"
+            android:background="@drawable/rounded_spinner_background"
+            android:padding="8dp"
+            android:layout_marginEnd="8dp"
+            android:dropDownHeight="wrap_content"
+            android:completionThreshold="1" />
+
+        <Spinner
+            android:id="@+id/filterWard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_spinner_background"
+            android:padding="8dp"
+            android:text="Ward No"
+            android:layout_marginEnd="8dp"
+            android:entries="@array/wards"
+            android:prompt="@string/ward_prompt" />
+
+        <Spinner
+            android:id="@+id/filterIssueOn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_spinner_background"
+            android:padding="8dp"
+            android:entries="@array/report_types"
+            android:prompt="@string/issue_prompt" />
+    </LinearLayout>
+
+    <!-- Scrollable Issue List -->
+    <ScrollView
+        android:id="@+id/postScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filterSection"
+        android:layout_above="@id/bottomNav"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/postsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Add 8 dummy posts -->
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

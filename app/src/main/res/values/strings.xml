@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Awaz</string>
+    <string name="ward_prompt">Ward No</string>
+    <string name="issue_prompt">Issue On</string>
+</resources>

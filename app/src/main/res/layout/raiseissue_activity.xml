@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Top Bar with only Back Button -->
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:padding="12dp"
+        android:background="@color/white">
+
+        <!-- Back Button (Left) -->
+        <ImageView
+            android:id="@+id/backArrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/back_gray"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="Back" />
+    </RelativeLayout>
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_below="@id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/submitSection"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="start">
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Raise an Issue"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Report a community issue with details"
+                android:textSize="12sp"
+                android:textColor="@color/gray_dark"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Issue Heading -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please write the heading of your issue"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp" />
+            <EditText
+                android:id="@+id/editIssueHeading"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="e.g., Pothole on Main Road"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:textSize="12dp"
+                android:inputType="text"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Issue Description -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Describe the issue in detail..."
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp" />
+            <EditText
+                android:id="@+id/editIssueDescription"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:hint="Provide detailed description"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:textSize="12dp"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Report Type Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please Select the type of Report you want to raise"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp" />
+            <Spinner
+                android:id="@+id/spinnerReportType"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:textSize="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- District Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please Select the District where you want Report Issue"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp" />
+            <Spinner
+                android:id="@+id/spinnerDistrict"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:textSize="14sp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Ward Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please Select the Ward where you want Report Issue"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp" />
+            <Spinner
+                android:id="@+id/spinnerWard"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:textSize="12dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Area Name Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please Provide name of your area"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp" />
+            <EditText
+                android:id="@+id/editAreaName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="e.g., Ramghat"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:textSize="12dp"
+                android:inputType="text"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Location -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enter Location"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp" />
+            <EditText
+                android:id="@+id/editLocation"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="e.g., Ward 4, Kathmandu"
+                android:background="@drawable/edittext_background"
+                android:padding="12dp"
+                android:textSize="12dp"
+                android:inputType="text"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Photo Upload Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Upload Photos"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Photo Upload Instructions -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add up to 2 photos to support your issue"
+                android:textSize="12dp"
+                android:textColor="@color/gray_dark"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Photo 1 Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Photo 1 (Optional)"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="6dp" />
+
+                <ImageView
+                    android:id="@+id/issuePhoto1Preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:src="@drawable/gallery_icon"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="Upload Photo 1"
+                    android:background="@drawable/edittext_background" />
+
+                <Button
+                    android:id="@+id/btnUploadPhoto1"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="Upload Photo"
+                    android:background="@drawable/button_rounded_blue"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <!-- Photo 2 Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Photo 2 (Optional)"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="6dp" />
+
+                <ImageView
+                    android:id="@+id/issuePhoto2Preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:src="@drawable/gallery_icon"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="Upload Photo 2"
+                    android:background="@drawable/edittext_background" />
+
+                <Button
+                    android:id="@+id/btnUploadPhoto2"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="Upload Photo"
+                    android:background="@drawable/button_rounded_blue"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Submit Section -->
+    <LinearLayout
+        android:id="@+id/submitSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="16dp"
+        android:gravity="center"
+        android:background="@color/white">
+
+        <Button
+            android:id="@+id/btnSubmitIssue"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Submit Issue"
+            android:background="@drawable/button_rounded_blue"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</RelativeLayout>

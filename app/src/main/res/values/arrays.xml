@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="report_types">
+        <item>All Issues</item>
+        <item>Water Supply</item>
+        <item>Electricity</item>
+        <item>Roads</item>
+        <item>Waste Management</item>
+        <item>Public Transport</item>
+        <item>Street Lighting</item>
+        <item>Drainage</item>
+        <item>Others</item>
+    </string-array>
+    <string-array name="districts">
+        <item>Select District</item>
+        <item>Bharatpur</item>
+        <item>Bhaktapur</item>
+        <item>Butwal</item>
+        <item>Biratnagar</item>
+        <!-- Add more districts as needed -->
+    </string-array>
+    <string-array name="wards">
+        <item>Select Ward</item>
+        <item>Ward 1</item>
+        <item>Ward 2</item>
+        <item>Ward 3</item>
+        <item>Ward 4</item>
+        <item>Ward 5</item>
+        <item>Ward 6</item>
+        <item>Ward 7</item>
+        <item>Ward 8</item>
+        <item>Ward 9</item>
+        <item>Ward 10</item>
+        <!-- ... up to 29 -->
+    </string-array>
+</resources>

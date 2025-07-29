@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CircleImage" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+<style name="TabButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+<item name="android:layout_margin">4dp</item>
+<item name="android:minHeight">36dp</item>
+<item name="android:minWidth">0dp</item>
+<item name="android:paddingLeft">16dp</item>
+<item name="android:paddingRight">16dp</item>
+<item name="android:textSize">14sp</item>
+<item name="android:textColor">@color/blue_primary</item>
+<item name="strokeColor">@color/blue_primary</item>
+<item name="strokeWidth">1dp</item>
+<item name="cornerRadius">20dp</item>
+<item name="backgroundTint">@android:color/transparent</item>
+</style>
+
+    <!-- Selected tab button -->
+    <style name="TabButton.Selected" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="backgroundTint">@color/blue_primary</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:layout_margin">4dp</item>
+    </style>
+
+
+    <style name="TabButton1" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:minHeight">36dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@android:color/black</item> <!-- ✅ Make text visible -->
+        <item name="strokeColor">@color/blue_primary</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="backgroundTint">@android:color/white</item> <!-- ✅ Give background to contrast text -->
+    </style>
+
+
+
+
+
+</resources>

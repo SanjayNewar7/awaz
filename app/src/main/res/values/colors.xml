@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="blue_primary">#2B5FCD</color>
+    <color name="red_accent">#D32F2F</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray_light">#acacac</color>
+    <color name="gray_dark">#A9A9A9</color>
+    <color name="gray_light_light">#f7f7f7</color>
+    <color name="gray_opacity_75">#BFf7f7f7</color>
+    <color name="post_background">#f0f0f0</color>
+    <color name="post_text">#4C4C4C</color>
+    <color name="green_text">#3FBA44</color>
+
+
+
+    <color name="notification_uncheck">#DFE8FD</color>
+
+</resources>

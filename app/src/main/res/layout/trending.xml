@@ -1,0 +1,261 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Top Bar -->
+    <RelativeLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="@color/white">
+
+        <!-- Awaz Logo -->
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/awaz_logo_blue"
+            android:contentDescription="Awaz Logo"
+            android:adjustViewBounds="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true" />
+
+        <!-- Profile Icon  -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgProfile"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/profile"
+            android:scaleType="centerCrop"
+            android:contentDescription="Profile"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+    </RelativeLayout>
+
+    <!-- Tab Section -->
+    <LinearLayout
+        android:id="@+id/tabSection"
+        android:layout_below="@id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingVertical="12dp"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/tabNearby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nearby"
+            android:textColor="@color/black"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="8dp"/>
+
+        <TextView
+            android:id="@+id/tabTrending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trending"
+            android:textColor="@color/white"
+            android:background="@drawable/tab_button_selected"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="8dp"/>
+
+        <TextView
+            android:id="@+id/tabAll"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="All"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="8dp"/>
+    </LinearLayout>
+
+    <!-- Scrollable Post Feed -->
+    <ScrollView
+        android:id="@+id/postScroll"
+        android:layout_below="@id/tabSection"
+        android:layout_above="@id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/postsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Add 8 dummy posts -->
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+            <include layout="@layout/item_post" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation with 5 icons -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/blue_primary">
+
+        <LinearLayout
+            android:id="@+id/homeLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/home_white"
+                android:contentDescription="Home"
+                android:layout_marginTop="-8dp"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textColor="@color/white"
+                android:textSize="8dp"
+                android:gravity="center"
+                android:layout_marginTop="-15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/filterLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/filter_white"
+                android:contentDescription="Filter"
+                android:layout_marginTop="-8dp"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filter"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                android:gravity="center"
+                android:layout_marginTop="-15dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/raiseIssueLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/add_icon"
+                android:contentDescription="Raise Issue"
+                android:layout_marginTop="-8dp"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Report"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                android:gravity="center"
+                android:layout_marginTop="-15dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/myReportLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/report"
+                android:contentDescription="My Reports"
+                android:layout_marginTop="-8dp"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="My Reports"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                android:gravity="center"
+                android:layout_marginTop="-15dp" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/settingLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/setting_white"
+                android:contentDescription="Settings"
+                android:layout_marginTop="-8dp"
+                android:padding="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Setting"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                android:gravity="center"
+                android:layout_marginTop="-15dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

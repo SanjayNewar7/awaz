@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:padding="24dp">
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Back btn -->
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/back_gray"
+                android:contentDescription="Back"
+                android:layout_gravity="start"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Logo -->
+            <ImageView
+                android:id="@+id/imageLogo"
+                android:layout_width="130dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="-20dp"
+                android:src="@drawable/awaz_logo_blue"
+                android:layout_marginBottom="24dp"
+                android:contentDescription="App Logo" />
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create Account"
+                android:textSize="24sp"
+                android:layout_marginTop="-40dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins_semibold"
+                android:textColor="@color/black"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fill the details below to register. Please provide your legal information."
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/gray_dark"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Gender Label -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Personal Information"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="6dp" />
+
+            <!-- First and Last Name -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/editFirstName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="First Name"
+                    android:background="@drawable/edittext_background"
+                    android:padding="14dp"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:layout_marginEnd="8dp" />
+
+                <EditText
+                    android:id="@+id/editLastName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Last Name"
+                    android:background="@drawable/edittext_background"
+                    android:padding="14dp"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_regular" />
+            </LinearLayout>
+
+            <!-- District -->
+            <EditText
+                android:id="@+id/editDistrict"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="District"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Ward -->
+            <EditText
+                android:id="@+id/editCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Metropolitan or Sub-Metropolitan name"
+                android:inputType="text"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+            <EditText
+                android:id="@+id/editWard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ward"
+                android:inputType="number"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Area Name -->
+            <EditText
+                android:id="@+id/editAreaName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Area Name (e.g., Ramghat Chowk)"
+                android:inputType="text"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Phone Number -->
+            <EditText
+                android:id="@+id/editPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Phone Number"
+                android:inputType="phone"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Gender Label -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Gender"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="6dp" />
+
+            <!-- Gender Radio Buttons -->
+            <RadioGroup
+                android:id="@+id/genderGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <RadioButton
+                    android:id="@+id/radioMale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Male"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_regular" />
+
+                <RadioButton
+                    android:id="@+id/radioFemale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Female"
+                    android:textSize="14sp"
+                    android:layout_marginStart="24dp"
+                    android:fontFamily="@font/poppins_regular" />
+            </RadioGroup>
+
+            <!-- Email -->
+            <EditText
+                android:id="@+id/editEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+
+
+            <!-- Gender Label -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Account Setup"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="6dp" />
+
+            <!-- Username -->
+            <EditText
+                android:id="@+id/editUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Username"
+                android:inputType="text"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Password -->
+            <EditText
+                android:id="@+id/editPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Citizenship Number -->
+            <EditText
+                android:id="@+id/editCitizenshipNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Citizenship Number"
+                android:inputType="text"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Citizenship Verification Label -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Citizenship Verification"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="6dp" />
+
+            <!-- Citizenship Verification Instructions -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Upload both sides of your Citizenship Certificate or National ID for verification."
+                android:textSize="12sp"
+                android:textColor="@color/gray_dark"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Front Citizenship Photo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Front (Required)"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/poppins_regular"
+                    android:layout_marginBottom="6dp" />
+
+                <ImageView
+                    android:id="@+id/citizenshipFrontPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="@drawable/edittext_background"
+                    android:contentDescription="Citizenship Front Preview"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/gallery_icon" />
+
+                <Button
+                    android:id="@+id/btnUploadFront"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="Upload Front Photo"
+                    android:background="@drawable/button_rounded_blue"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <!-- Back Citizenship Photo -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Back (Required)"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/poppins_regular"
+                    android:layout_marginBottom="6dp" />
+
+                <ImageView
+                    android:id="@+id/citizenshipBackPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:src="@drawable/gallery_icon"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="Citizenship Back Preview"
+                    android:background="@drawable/edittext_background" />
+
+                <Button
+                    android:id="@+id/btnUploadBack"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="Upload Back Photo"
+                    android:background="@drawable/button_rounded_blue"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <!-- Agreement Checkbox -->
+            <CheckBox
+                android:id="@+id/checkAgree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I agree to the terms and conditions"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:textColor="@color/gray_dark"
+                android:layout_marginBottom="24dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Fixed Button at Bottom -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingTop="8dp"
+        android:paddingBottom="24dp">
+
+        <Button
+            android:id="@+id/btnCreateAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create Account"
+            android:background="@drawable/button_rounded_blue"
+            android:textColor="@color/white"
+            android:fontFamily="@font/poppins_semibold" />
+    </LinearLayout>
+</LinearLayout>
