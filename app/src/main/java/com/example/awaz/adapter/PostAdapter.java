@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,7 +59,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         Log.d(TAG, "Bound data for position " + position + ": " + post.getTitle());
 
         // Set click listeners for title and description
-        // Set click listeners for title and description
         holder.postTitle.setOnClickListener(v -> {
             Toast.makeText(context, "Clicked Title", Toast.LENGTH_SHORT).show();
             openPostDetail(post);
@@ -67,6 +67,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             Toast.makeText(context, "Clicked Title", Toast.LENGTH_SHORT).show();
             openPostDetail(post);
         });
+    }
+
     @Override
     public int getItemCount() {
         int count = postList != null ? postList.size() : 0;
@@ -74,11 +76,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         return count;
     }
 
-        private void openPostDetail(Post post) {
-            Intent intent = new Intent(context, ItemPostDetailActivity.class);
-            intent.putExtra("post", post); // pass the entire Post object
-            context.startActivity(intent);
-}
+    private void openPostDetail(Post post) {
+        Intent intent = new Intent(context, ItemPostDetailActivity.class);
+        intent.putExtra("post", post); // pass the entire Post object
+        context.startActivity(intent);
+    }
+
+
     static class PostViewHolder extends RecyclerView.ViewHolder {
         TextView postAuthor, postCategory, postTime, postTitle, postDescription;
         TextView supportCount, affectedCount, notSureCount, invalidCount, fixedCount;
@@ -98,9 +102,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
             // Log to verify view initialization
             Log.d("PostViewHolder", "Initialized views: " + postAuthor.getId());
-        }
-    }
 }
-
-    public class PostViewHolder {
-    }
+}
+}

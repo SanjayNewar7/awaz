@@ -26,6 +26,7 @@
         <activity android:name=".view.HomeMainActivity" />
         <activity android:name=".view.FullscreenImageActivity" />
         <activity android:name=".view.AllSettingActivity" />
+        <activity android:name=".view.PolicyActivity" />
         <activity android:name=".view.PersonalInformationActivity" />
         <activity
             android:name=".view.ItemPostDetailActivity"

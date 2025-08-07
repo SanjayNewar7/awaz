@@ -19,7 +19,7 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
-            <!-- Back btn -->
+            <!-- Back Button -->
             <ImageView
                 android:id="@+id/btnBack"
                 android:layout_width="24dp"
@@ -60,15 +60,16 @@
                 android:textColor="@color/gray_dark"
                 android:layout_marginBottom="24dp" />
 
-            <!-- Gender Label -->
+            <!-- Personal Information Section -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Personal Information"
-                android:textSize="14sp"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:textColor="@color/black"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="6dp" />
+                android:fontFamily="@font/poppins_semibold"
+                android:layout_marginBottom="12dp" />
 
             <!-- First and Last Name -->
             <LinearLayout
@@ -114,7 +115,7 @@
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Ward -->
+            <!-- City -->
             <EditText
                 android:id="@+id/editCity"
                 android:layout_width="match_parent"
@@ -127,6 +128,7 @@
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="16dp" />
 
+            <!-- Ward -->
             <EditText
                 android:id="@+id/editWard"
                 android:layout_width="match_parent"
@@ -165,7 +167,20 @@
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="16dp" />
 
-            <!-- Gender Label -->
+            <!-- Email -->
+            <EditText
+                android:id="@+id/editEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Gender -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -175,13 +190,12 @@
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="6dp" />
 
-            <!-- Gender Radio Buttons -->
             <RadioGroup
                 android:id="@+id/genderGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="24dp">
 
                 <RadioButton
                     android:id="@+id/radioMale"
@@ -199,32 +213,27 @@
                     android:textSize="14sp"
                     android:layout_marginStart="24dp"
                     android:fontFamily="@font/poppins_regular" />
+
+                <RadioButton
+                    android:id="@+id/radioOther"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Other"
+                    android:textSize="14sp"
+                    android:layout_marginStart="24dp"
+                    android:fontFamily="@font/poppins_regular" />
             </RadioGroup>
 
-            <!-- Email -->
-            <EditText
-                android:id="@+id/editEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Email"
-                android:inputType="textEmailAddress"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="16dp" />
-
-
-
-            <!-- Gender Label -->
+            <!-- Account Setup Section -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Account Setup"
-                android:textSize="14sp"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:textColor="@color/black"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="6dp" />
+                android:fontFamily="@font/poppins_semibold"
+                android:layout_marginBottom="12dp" />
 
             <!-- Username -->
             <EditText
@@ -250,7 +259,42 @@
                 android:padding="14dp"
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Password Strength Indicator -->
+            <TextView
+                android:id="@+id/passwordStrength"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Password Strength: Weak"
+                android:textSize="12sp"
+                android:textColor="@color/gray_dark"
+                android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="16dp" />
+
+            <!-- Confirm Password -->
+            <EditText
+                android:id="@+id/editConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Confirm Password"
+                android:inputType="textPassword"
+                android:background="@drawable/edittext_background"
+                android:padding="14dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Citizenship Verification Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Citizenship Verification"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_semibold"
+                android:layout_marginBottom="12dp" />
 
             <!-- Citizenship Number -->
             <EditText
@@ -264,16 +308,6 @@
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="16dp" />
-
-            <!-- Citizenship Verification Label -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Citizenship Verification"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="6dp" />
 
             <!-- Citizenship Verification Instructions -->
             <TextView
@@ -357,16 +391,34 @@
                     android:layout_marginTop="8dp" />
             </LinearLayout>
 
-            <!-- Agreement Checkbox -->
-            <CheckBox
-                android:id="@+id/checkAgree"
-                android:layout_width="wrap_content"
+            <!-- Agreement Checkbox and Policy Link -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="I agree to the terms and conditions"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:textColor="@color/gray_dark"
-                android:layout_marginBottom="24dp" />
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <CheckBox
+                    android:id="@+id/checkAgree"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="I agree to the"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/gray_dark" />
+
+                <TextView
+                    android:id="@+id/viewPolicy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="terms and conditions"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textColor="@color/blue_primary"
+                    android:layout_marginStart="4dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

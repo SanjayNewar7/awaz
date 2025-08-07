@@ -9,10 +9,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.awaz.R;
-import com.example.awaz.controller.LoginController;
+import com.example.awaz.controller.AuthController;
 
 public class LoginActivity extends AppCompatActivity {
-    private LoginController controller;
+    private AuthController controller;
     private EditText editEmail;
     private EditText editPassword;
 
@@ -22,7 +22,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // Initialize controller
-        controller = new LoginController(this);
+        controller = new AuthController(this);
 
         // Initialize views
         editEmail = findViewById(R.id.editPhone); // Consider renaming to editEmail in XML
@@ -45,10 +45,10 @@ public class LoginActivity extends AppCompatActivity {
         // Login button click listener
         Button loginBtn = findViewById(R.id.btnLogin);
         loginBtn.setOnClickListener(view -> {
-            if (controller.validateFields()) {
-                Intent intent = new Intent(LoginActivity.this, HomeMainActivity.class);
-                startActivity(intent);
-                finish(); // Close LoginActivity to prevent going back
+            if (controller.validateLoginFields(editEmail, editPassword)) {
+                String email = getEmail();
+                String password = getPassword();
+                controller.login(email, password);
             }
         });
     }
