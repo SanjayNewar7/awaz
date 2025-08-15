@@ -27,32 +27,10 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_activity);
 
+        // Initialize UI elements
         ImageView back = findViewById(R.id.backArrow);
-        back.setOnClickListener(view -> {
-            Intent intent = new Intent(ProfileActivity.this, HomeMainActivity.class);
-            startActivity(intent);
-        });
-
-        // Add click listener for profile image
         ShapeableImageView profileImage = findViewById(R.id.profile_image);
-        profileImage.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, FullscreenImageActivity.class);
-            intent.putExtra("image_resource", R.drawable.profile);
-            startActivity(intent);
-        });
-
-        // Add click listener for like button
         likeButton = findViewById(R.id.likeButton);
-        likeButton.setOnClickListener(v -> {
-            isLiked = !isLiked; // Toggle like state
-            if (isLiked) {
-                likeButton.setImageResource(R.drawable.heart);
-                showPopup("You gave a heart");
-            } else {
-                likeButton.setImageResource(R.drawable.disheart);
-                showPopup("You removed heart");
-            }
-        });
 
         // Initialize filter buttons
         TextView filterAll = findViewById(R.id.filterAll);
@@ -64,6 +42,31 @@ public class ProfileActivity extends AppCompatActivity {
         TextView filterEvents = findViewById(R.id.filterMore1); // Assuming More1 is Events
         TextView filterMore = findViewById(R.id.filterMore2);
 
+        // Set click listener for back arrow
+        back.setOnClickListener(view -> {
+            Intent intent = new Intent(ProfileActivity.this, HomeMainActivity.class);
+            startActivity(intent);
+        });
+
+        // Set click listener for profile image
+        profileImage.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, FullscreenImageActivity.class);
+            intent.putExtra("image_resource", R.drawable.profile);
+            startActivity(intent);
+        });
+
+        // Set click listener for like button
+        likeButton.setOnClickListener(v -> {
+            isLiked = !isLiked; // Toggle like state
+            if (isLiked) {
+                likeButton.setImageResource(R.drawable.heart);
+                showPopup("You gave a heart");
+            } else {
+                likeButton.setImageResource(R.drawable.disheart);
+                showPopup("You removed heart");
+            }
+        });
+
         // Set initial state (e.g., "All" selected by default)
         setFilterBackground(filterAll, true);
         resetOtherFilters(filterAll);
@@ -73,8 +76,11 @@ public class ProfileActivity extends AppCompatActivity {
             TextView clickedFilter = (TextView) v;
             setFilterBackground(clickedFilter, true);
             resetOtherFilters(clickedFilter);
+            // Add your filtering logic here (e.g., update posts based on filter)
+            // Example: filterPosts(clickedFilter.getText().toString());
         };
 
+        // Attach click listeners to filter buttons (null checks included)
         if (filterAll != null) filterAll.setOnClickListener(filterClickListener);
         if (filterRoad != null) filterRoad.setOnClickListener(filterClickListener);
         if (filterElectricity != null) filterElectricity.setOnClickListener(filterClickListener);
@@ -90,10 +96,10 @@ public class ProfileActivity extends AppCompatActivity {
         if (filter != null) {
             if (isSelected) {
                 filter.setBackgroundResource(R.drawable.rounded_button_blue);
-                filter.setTextColor(ContextCompat.getColor(this, R.color.white)); // Optional: Change text color for selected state
+                filter.setTextColor(ContextCompat.getColor(this, R.color.white));
             } else {
                 filter.setBackgroundResource(R.drawable.rounded_button_grey);
-                filter.setTextColor(ContextCompat.getColor(this, R.color.black)); // Optional: Reset text color
+                filter.setTextColor(ContextCompat.getColor(this, R.color.black));
             }
         }
     }

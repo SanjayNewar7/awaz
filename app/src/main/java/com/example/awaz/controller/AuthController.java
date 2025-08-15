@@ -5,16 +5,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.util.Patterns;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.awaz.service.RetrofitClient;
 import com.example.awaz.model.SignupRequest;
 import com.example.awaz.model.SignupResponse;
+import com.example.awaz.service.RetrofitClient;
 import com.example.awaz.view.LoginActivity;
 import com.google.gson.Gson;
 
@@ -35,7 +33,7 @@ public class AuthController {
 
     public AuthController(Context context) {
         this.context = context;
-        this.apiService = RetrofitClient.getApiService();
+        this.apiService = RetrofitClient.getApiService(context);
     }
 
     public boolean validateSignupFields(EditText editFirstName, EditText editLastName, EditText editDistrict,
@@ -136,9 +134,10 @@ public class AuthController {
                 Log.d(TAG, "Signup response code: " + response.code());
                 Log.d(TAG, "Response body: " + (response.body() != null ? new Gson().toJson(response.body()) : "null"));
                 try {
-                    Log.d(TAG, "Error body: " + (response.errorBody() != null ? response.errorBody().toString() : response.errorBody() != null ? response.errorBody().string() : "null"));
+                    String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
+                    Log.d(TAG, "Error body: " + errorBody);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    Log.e(TAG, "Error reading error body: " + e.getMessage());
                 }
                 if (response.isSuccessful() && response.body() != null) {
                     SignupResponse signupResponse = response.body();
@@ -150,16 +149,15 @@ public class AuthController {
                         ((AppCompatActivity) context).finish();
                     }
                 } else {
-                    Log.d(TAG, "Signup failed with message: " + response.message());
                     String errorMessage = "Registration failed";
                     try {
                         String errorBody = response.errorBody() != null ? response.errorBody().string() : "No error body";
                         Log.d(TAG, "Signup error body (raw): " + errorBody);
-                        if (errorBody.contains("errors") || errorBody.contains("messsage")) {
+                        if (errorBody.contains("errors") || errorBody.contains("message")) {
                             Gson gson = new Gson();
                             Map<String, Object> errorJson = gson.fromJson(errorBody, Map.class);
                             if (errorJson != null) {
-                                String message = (String) errorJson.get("messsage") != null ? (String) errorJson.get("messsage") : (String) errorJson.get("message");
+                                String message = (String) errorJson.get("message") != null ? (String) errorJson.get("message") : (String) errorJson.get("messsage");
                                 if (message != null && message.contains("CSRF token mismatch")) {
                                     errorMessage = "Registration failed: CSRF token mismatch";
                                 }
@@ -198,12 +196,8 @@ public class AuthController {
         });
     }
 
-    public boolean validateLoginFields(EditText editEmail, EditText editPassword) {
+    public SignupResponse.User getCurrentUser() {
 
-        return false;
-    }
-
-    public void login(String email, String password) {
-
+        return null;
     }
 }

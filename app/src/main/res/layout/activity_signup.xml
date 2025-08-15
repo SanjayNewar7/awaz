@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -57,7 +58,7 @@
                 android:text="Fill the details below to register. Please provide your legal information."
                 android:textSize="14sp"
                 android:fontFamily="@font/poppins_regular"
-                android:textColor="@color/gray_dark"
+                android:textColor="@color/black"
                 android:layout_marginBottom="24dp" />
 
             <!-- Personal Information Section -->
@@ -79,106 +80,181 @@
                 android:weightSum="2"
                 android:layout_marginBottom="16dp">
 
-                <EditText
-                    android:id="@+id/editFirstName"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputFirstName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="First Name"
-                    android:background="@drawable/edittext_background"
-                    android:padding="14dp"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins_regular"
-                    android:layout_marginEnd="8dp" />
+                    android:textColorHint="@color/gray_dark"
+                    app:boxStrokeColor="@color/blue_primary"
+                    app:boxBackgroundMode="outline"
+                    app:errorEnabled="true"
+                    android:layout_marginEnd="8dp">
 
-                <EditText
-                    android:id="@+id/editLastName"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editFirstName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textSize="14sp"
+                        android:textColor="@color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLastName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Last Name"
-                    android:background="@drawable/edittext_background"
-                    android:padding="14dp"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins_regular" />
+                    android:textColorHint="@color/gray_dark"
+                    app:boxStrokeColor="@color/blue_primary"
+                    app:boxBackgroundMode="outline"
+                    app:errorEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editLastName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:fontFamily="@font/poppins_regular"
+                        android:textSize="14sp"
+                        android:textColor="@color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
             <!-- District -->
-            <EditText
-                android:id="@+id/editDistrict"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputDistrict"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="District"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="16dp" />
+                android:textColorHint="@color/gray_dark"
+                app:boxStrokeColor="@color/blue_primary"
+                app:boxBackgroundMode="outline"
+                app:errorEnabled="true"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editDistrict"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- City -->
-            <EditText
-                android:id="@+id/editCity"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputCity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Metropolitan or Sub-Metropolitan name"
-                android:inputType="text"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="16dp" />
+                android:textColorHint="@color/gray_dark"
+                app:boxStrokeColor="@color/blue_primary"
+                app:boxBackgroundMode="outline"
+                app:errorEnabled="true"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editCity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Ward -->
-            <EditText
-                android:id="@+id/editWard"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputWard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ward"
-                android:inputType="number"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="16dp" />
+                android:textColorHint="@color/gray_dark"
+                app:boxStrokeColor="@color/blue_primary"
+                app:boxBackgroundMode="outline"
+                app:errorEnabled="true"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editWard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Area Name -->
-            <EditText
-                android:id="@+id/editAreaName"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputAreaName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Area Name (e.g., Ramghat Chowk)"
-                android:inputType="text"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="16dp" />
+                android:textColorHint="@color/gray_dark"
+                app:boxStrokeColor="@color/blue_primary"
+                app:boxBackgroundMode="outline"
+                app:errorEnabled="true"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editAreaName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Phone Number -->
-            <EditText
-                android:id="@+id/editPhone"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Phone Number"
-                android:inputType="phone"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="16dp" />
+                android:textColorHint="@color/gray_dark"
+                app:boxStrokeColor="@color/blue_primary"
+                app:boxBackgroundMode="outline"
+                app:errorEnabled="true"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Email -->
-            <EditText
-                android:id="@+id/editEmail"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
-                android:inputType="textEmailAddress"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="16dp" />
+                android:textColorHint="@color/gray_dark"
+                app:boxStrokeColor="@color/blue_primary"
+                app:boxBackgroundMode="outline"
+                app:errorEnabled="true"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Gender -->
             <TextView
@@ -236,30 +312,49 @@
                 android:layout_marginBottom="12dp" />
 
             <!-- Username -->
-            <EditText
-                android:id="@+id/editUsername"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputUsername"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Username"
-                android:inputType="text"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="16dp" />
+                android:textColorHint="@color/gray_dark"
+                app:boxStrokeColor="@color/blue_primary"
+                app:boxBackgroundMode="outline"
+                app:errorEnabled="true"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Password -->
-            <EditText
-                android:id="@+id/editPassword"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Password"
-                android:inputType="textPassword"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="8dp" />
+                android:textColorHint="@color/gray_dark"
+                app:boxStrokeColor="@color/blue_primary"
+                app:boxBackgroundMode="outline"
+                app:passwordToggleEnabled="true"
+                app:errorEnabled="true"
+                android:layout_marginBottom="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Password Strength Indicator -->
             <TextView
@@ -273,17 +368,27 @@
                 android:layout_marginBottom="16dp" />
 
             <!-- Confirm Password -->
-            <EditText
-                android:id="@+id/editConfirmPassword"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputConfirmPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Confirm Password"
-                android:inputType="textPassword"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="24dp" />
+                android:textColorHint="@color/gray_dark"
+                app:boxStrokeColor="@color/blue_primary"
+                app:boxBackgroundMode="outline"
+                app:passwordToggleEnabled="true"
+                app:errorEnabled="true"
+                android:layout_marginBottom="24dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editConfirmPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Citizenship Verification Section -->
             <TextView
@@ -297,17 +402,26 @@
                 android:layout_marginBottom="12dp" />
 
             <!-- Citizenship Number -->
-            <EditText
-                android:id="@+id/editCitizenshipNumber"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputCitizenshipNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Citizenship Number"
-                android:inputType="text"
-                android:background="@drawable/edittext_background"
-                android:padding="14dp"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins_regular"
-                android:layout_marginBottom="16dp" />
+                android:textColorHint="@color/gray_dark"
+                app:boxStrokeColor="@color/blue_primary"
+                app:boxBackgroundMode="outline"
+                app:errorEnabled="true"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editCitizenshipNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:fontFamily="@font/poppins_regular"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Citizenship Verification Instructions -->
             <TextView
@@ -315,7 +429,7 @@
                 android:layout_height="wrap_content"
                 android:text="Upload both sides of your Citizenship Certificate or National ID for verification."
                 android:textSize="12sp"
-                android:textColor="@color/gray_dark"
+                android:textColor="@color/black"
                 android:fontFamily="@font/poppins_regular"
                 android:layout_marginBottom="16dp" />
 
@@ -329,7 +443,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Front (Required)"
+                    android:text="Front image (Required)"
                     android:textSize="14sp"
                     android:textColor="@color/black"
                     android:fontFamily="@font/poppins_regular"
@@ -344,14 +458,15 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/gallery_icon" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUploadFront"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:text="Upload Front Photo"
-                    android:background="@drawable/button_rounded_blue"
                     android:textColor="@color/white"
                     android:fontFamily="@font/poppins_semibold"
+                    app:backgroundTint="@color/blue_primary"
+                    app:cornerRadius="8dp"
                     android:layout_marginTop="8dp" />
             </LinearLayout>
 
@@ -365,7 +480,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Back (Required)"
+                    android:text="Back image (Required)"
                     android:textSize="14sp"
                     android:textColor="@color/black"
                     android:fontFamily="@font/poppins_regular"
@@ -380,14 +495,15 @@
                     android:contentDescription="Citizenship Back Preview"
                     android:background="@drawable/edittext_background" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUploadBack"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:text="Upload Back Photo"
-                    android:background="@drawable/button_rounded_blue"
                     android:textColor="@color/white"
                     android:fontFamily="@font/poppins_semibold"
+                    app:backgroundTint="@color/blue_primary"
+                    app:cornerRadius="8dp"
                     android:layout_marginTop="8dp" />
             </LinearLayout>
 
@@ -431,13 +547,14 @@
         android:paddingTop="8dp"
         android:paddingBottom="24dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreateAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Create Account"
-            android:background="@drawable/button_rounded_blue"
             android:textColor="@color/white"
-            android:fontFamily="@font/poppins_semibold" />
+            android:fontFamily="@font/poppins_semibold"
+            app:backgroundTint="@color/blue_primary"
+            app:cornerRadius="8dp" />
     </LinearLayout>
 </LinearLayout>
