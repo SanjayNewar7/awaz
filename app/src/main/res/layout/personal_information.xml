@@ -6,6 +6,13 @@
     android:orientation="vertical"
     android:background="@color/blue_primary">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
     <!-- Header Section -->
     <RelativeLayout
         android:layout_width="match_parent"
@@ -128,7 +135,6 @@
                             android:id="@+id/firstNameEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Sanjaya"
                             android:textColor="@color/black"
                             android:textSize="12sp"
                             android:padding="12dp"
@@ -164,7 +170,6 @@
                             android:id="@+id/lastNameEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Rajbhandari"
                             android:textColor="@color/black"
                             android:textSize="12sp"
                             android:padding="12dp"
@@ -173,18 +178,75 @@
                             android:clickable="false" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Address Section -->
+                    <!-- District Section -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Address"
+                        android:text="District"
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="6dp" />
 
+                    <Spinner
+                        android:id="@+id/districtSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:enabled="false"
+                        android:background="@drawable/spinner_background"/>
+
+                    <!-- City/Region Type Section -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="City/Region Type"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp" />
+
+                    <Spinner
+                        android:id="@+id/regionTypeSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:enabled="false"
+                        android:background="@drawable/spinner_background"/>
+
+                    <!-- Ward Section -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Ward Number"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp" />
+
+                    <Spinner
+                        android:id="@+id/wardSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:enabled="false"
+                        android:background="@drawable/spinner_background"/>
+
+                    <!-- Area Name Section -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Area Name"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="6dp" />
+
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/addressLayout"
+                        android:id="@+id/areaNameLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
@@ -197,13 +259,13 @@
                         app:boxStrokeWidth="1dp">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/addressEditText"
+                            android:id="@+id/areaNameEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Bharatpur-4, Chitwan"
                             android:textColor="@color/black"
                             android:textSize="12sp"
-                            android:padding="12dp" />
+                            android:padding="12dp"
+                            android:enabled="false" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Contact Number Section -->
@@ -214,6 +276,7 @@
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         android:textStyle="bold"
+                        android:layout_marginTop="12dp"
                         android:layout_marginBottom="6dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -234,10 +297,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="phone"
-                            android:text="9817262424"
                             android:textColor="@color/black"
                             android:textSize="12sp"
-                            android:padding="12dp" />
+                            android:padding="12dp"
+                            android:enabled="false" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Email Section -->
@@ -248,6 +311,7 @@
                         android:textColor="@color/black"
                         android:textSize="14sp"
                         android:textStyle="bold"
+                        android:layout_marginTop="12dp"
                         android:layout_marginBottom="6dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -268,10 +332,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textEmailAddress"
-                            android:text="Sanjaynewar007@gmail.com"
                             android:textColor="@color/black"
                             android:textSize="12sp"
-                            android:padding="12dp" />
+                            android:padding="12dp"
+                            android:enabled="false" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <!-- Profile Display Section -->
@@ -309,19 +373,20 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/bioEditText"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Hi! I'm Sanjaya Rajbhandari from Chitwan, currently working at Bihani Tech and pursuing my BCA at Oxford College of Engineering and Management. I'm passionate about digital innovation, especially in tech and marketing, and love turning ideas into impactful solutions."
+                            android:layout_height="120dp"
+                            android:text="Hello, Namaste everyone"
                             android:textColor="@color/black"
                             android:textSize="12sp"
                             android:padding="12dp"
                             android:gravity="top"
-                            android:maxLength="500" /> <!-- Approx 100 words -->
+                            android:enabled="false"
+                            android:maxLength="120" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Maximum 100 words"
+                        android:text="Maximum 120 characters"
                         android:textColor="@color/gray_dark"
                         android:textSize="10sp"
                         android:layout_marginBottom="32dp" />
@@ -338,16 +403,14 @@
                 android:background="@color/white">
 
                 <Button
-                    android:id="@+id/cancelButton"
-                    android:layout_width="0dp"
+                    android:id="@+id/editButton"
+                    android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:text="Cancel"
+                    android:text="Edit"
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:background="@drawable/button_background_gray"
+                    android:background="@drawable/rounded_button_blue"
                     android:elevation="0dp"
                     android:stateListAnimator="@null" />
 
@@ -363,7 +426,23 @@
                     android:textStyle="bold"
                     android:background="@drawable/rounded_button_blue"
                     android:elevation="0dp"
-                    android:stateListAnimator="@null" />
+                    android:stateListAnimator="@null"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/cancelButton"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="Cancel"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_background_gray"
+                    android:elevation="0dp"
+                    android:stateListAnimator="@null"
+                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

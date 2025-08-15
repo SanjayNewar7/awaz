@@ -13,24 +13,90 @@
     </string-array>
     <string-array name="districts">
         <item>Select District</item>
-        <item>Bharatpur</item>
+        <item>Bhojpur</item>
+        <item>Dhankuta</item>
+        <item>Ilam</item>
+        <item>Jhapa</item>
+        <item>Khotang</item>
+        <item>Morang</item>
+        <item>Okhaldhunga</item>
+        <item>Panchthar</item>
+        <item>Sankhuwasabha</item>
+        <item>Solukhumbu</item>
+        <item>Sunsari</item>
+        <item>Taplejung</item>
+        <item>Terhathum</item>
+        <item>Udayapur</item>
+        <item>Bara</item>
+        <item>Dhanusa</item>
+        <item>Mahottari</item>
+        <item>Parsa</item>
+        <item>Rautahat</item>
+        <item>Saptari</item>
+        <item>Sarlahi</item>
+        <item>Siraha</item>
         <item>Bhaktapur</item>
-        <item>Butwal</item>
-        <item>Biratnagar</item>
-        <!-- Add more districts as needed -->
+        <item>Chitwan</item>
+        <item>Dhading</item>
+        <item>Dolakha</item>
+        <item>Kathmandu</item>
+        <item>Kavrepalanchok</item>
+        <item>Lalitpur</item>
+        <item>Makwanpur</item>
+        <item>Nuwakot</item>
+        <item>Ramechhap</item>
+        <item>Rasuwa</item>
+        <item>Sindhuli</item>
+        <item>Sindhupalchok</item>
+        <item>Baglung</item>
+        <item>Gorkha</item>
+        <item>Kaski</item>
+        <item>Lamjung</item>
+        <item>Manang</item>
+        <item>Mustang</item>
+        <item>Myagdi</item>
+        <item>Nawalpur</item>
+        <item>Parbat</item>
+        <item>Syangja</item>
+        <item>Tanahun</item>
+        <item>Arghakhanchi</item>
+        <item>Banke</item>
+        <item>Bardiya</item>
+        <item>Dang Deukhuri</item>
+        <item>Gulmi</item>
+        <item>Kapilvastu</item>
+        <item>Parasi</item>
+        <item>Palpa</item>
+        <item>Pyuthan</item>
+        <item>Rolpa</item>
+        <item>Rupandehi</item>
+        <item>Eastern Rukum</item>
+        <item>Dailekh</item>
+        <item>Dolpa</item>
+        <item>Humla</item>
+        <item>Jajarkot</item>
+        <item>Jumla</item>
+        <item>Kalikot</item>
+        <item>Mugu</item>
+        <item>Salyan</item>
+        <item>Surkhet</item>
+        <item>Western Rukum</item>
+        <item>Achham</item>
+        <item>Baitadi</item>
+        <item>Bajhang</item>
+        <item>Bajura</item>
+        <item>Dadeldhura</item>
+        <item>Darchula</item>
+        <item>Doti</item>
+        <item>Kailali</item>
+        <item>Kanchanpur</item>
     </string-array>
+
+    <string-array name="region_types">
+        <item>Select Region Type</item>
+    </string-array>
+
     <string-array name="wards">
         <item>Select Ward</item>
-        <item>Ward 1</item>
-        <item>Ward 2</item>
-        <item>Ward 3</item>
-        <item>Ward 4</item>
-        <item>Ward 5</item>
-        <item>Ward 6</item>
-        <item>Ward 7</item>
-        <item>Ward 8</item>
-        <item>Ward 9</item>
-        <item>Ward 10</item>
-        <!-- ... up to 29 -->
     </string-array>
 </resources>
