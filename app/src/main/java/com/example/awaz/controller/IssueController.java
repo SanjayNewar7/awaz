@@ -1,6 +1,7 @@
 package com.example.awaz.controller;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -11,7 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.awaz.model.IssueRequest;
 import com.example.awaz.model.IssueResponse;
 import com.example.awaz.service.RetrofitClient;
+import com.example.awaz.view.HomeMainActivity;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -93,55 +97,35 @@ public class IssueController {
             @Override
             public void onResponse(Call<IssueResponse> call, Response<IssueResponse> response) {
                 Log.d(TAG, "Issue submission response code: " + response.code());
-                try {
-                    String errorBody = response.errorBody() != null ? response.errorBody().string() : "null";
-                    Log.d(TAG, "Response error body: " + errorBody);
-                } catch (IOException e) {
-                    Log.e(TAG, "Error reading error body: " + e.getMessage());
-                }
 
                 if (response.isSuccessful() && response.body() != null) {
                     IssueResponse issueResponse = response.body();
-                    Log.d(TAG, "Issue response: " + new Gson().toJson(issueResponse));
-                    Toast.makeText(context, issueResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Issue created successfully: " + new Gson().toJson(issueResponse));
+
+                    // Show success message and redirect
+                    Toast.makeText(context, "Issue submitted successfully", Toast.LENGTH_SHORT).show();
+
                     if (context instanceof AppCompatActivity) {
+                        Intent intent = new Intent(context, HomeMainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
                         ((AppCompatActivity) context).finish();
                     }
                 } else {
+                    // Handle error cases
                     String errorMessage = "Failed to submit issue";
                     try {
-                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "No error body";
-                        Log.d(TAG, "Issue error body (raw): " + errorBody);
-                        if (errorBody.contains("errors") || errorBody.contains("message")) {
-                            Gson gson = new Gson();
-                            Map<String, Object> errorJson = gson.fromJson(errorBody, new TypeToken<Map<String, Object>>(){}.getType());
-                            if (errorJson != null) {
-                                String message = (String) errorJson.get("message");
-                                if (message != null && message.contains("Unauthenticated")) {
-                                    errorMessage = "Please log in to submit an issue";
-                                } else if (message != null) {
-                                    errorMessage = "Failed to submit issue: " + message;
-                                }
-                                Map<String, String[]> errors = (Map<String, String[]>) errorJson.get("errors");
-                                if (errors != null) {
-                                    StringBuilder errorMsg = new StringBuilder("Failed to submit issue:\n");
-                                    errors.forEach((field, messages) -> {
-                                        String fieldName = field.replace("_", " ");
-                                        errorMsg.append(fieldName.substring(0, 1).toUpperCase())
-                                                .append(fieldName.substring(1))
-                                                .append(": ")
-                                                .append(messages[0])
-                                                .append("\n");
-                                    });
-                                    errorMessage = errorMsg.toString();
-                                }
+                        if (response.code() == 401) {
+                            errorMessage = "Please log in to submit an issue";
+                        } else if (response.errorBody() != null) {
+                            String errorBody = response.errorBody().string();
+                            JsonObject errorJson = new JsonParser().parse(errorBody).getAsJsonObject();
+                            if (errorJson.has("message")) {
+                                errorMessage = errorJson.get("message").getAsString();
                             }
-                        } else {
-                            errorMessage = "Failed to submit issue: " + errorBody;
                         }
                     } catch (Exception e) {
-                        Log.e(TAG, "Error parsing error body: " + e.getMessage());
-                        errorMessage = "Failed to submit issue: " + response.message();
+                        Log.e(TAG, "Error parsing error response", e);
                     }
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
                 }
@@ -150,7 +134,7 @@ public class IssueController {
             @Override
             public void onFailure(Call<IssueResponse> call, Throwable t) {
                 Log.e(TAG, "Issue submission error: " + t.getMessage(), t);
-                Toast.makeText(context, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -176,6 +176,32 @@ public class RaiseIssueActivity extends AppCompatActivity {
             String areaName = editAreaName.getText().toString().trim();
             String location = spinnerRegionType.getSelectedItem().toString();
 
+            // Basic validation
+            if (heading.isEmpty()) {
+                editIssueHeading.setError("Heading is required");
+                return;
+            }
+            if (description.isEmpty()) {
+                editIssueDescription.setError("Description is required");
+                return;
+            }
+            if (areaName.isEmpty()) {
+                editAreaName.setError("Area name is required");
+                return;
+            }
+            if (reportType.equals("Select Report Type")) {
+                Toast.makeText(this, "Please select a report type", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (district.equals("Select District")) {
+                Toast.makeText(this, "Please select a district", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (ward.equals("Select Ward")) {
+                Toast.makeText(this, "Please select a ward", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             // Convert images to base64 if available
             String photo1 = null;
             String photo2 = null;
