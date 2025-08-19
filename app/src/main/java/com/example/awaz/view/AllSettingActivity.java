@@ -5,22 +5,35 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.awaz.R;
+import com.example.awaz.controller.UserController;
+import com.example.awaz.model.UserData;
+import com.example.awaz.service.RetrofitClient;
 import com.google.android.material.imageview.ShapeableImageView;
 
 public class AllSettingActivity extends AppCompatActivity {
 
+    private static final String TAG = "AllSettingActivity";
+    private static final String BASE_URL = "http://192.168.1.70:8000"; // Your server base URL
     private static final int PICK_IMAGE_REQUEST = 1;
     private ShapeableImageView profileImage;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private String profileImageUrl; // To store the dynamically loaded image URL
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +53,9 @@ public class AllSettingActivity extends AppCompatActivity {
         LinearLayout aboutUsLayout = findViewById(R.id.aboutUsLayout);
         LinearLayout exitLayout = findViewById(R.id.exitLayout);
         ImageView back = findViewById(R.id.backArrow);
+
+        // Fetch and load profile image dynamically
+        fetchAndLoadProfileImage();
 
         // Initialize image picker launcher
         imagePickerLauncher = registerForActivityResult(
@@ -67,9 +83,13 @@ public class AllSettingActivity extends AppCompatActivity {
 
         // Profile image click listener for full screen view
         profileImage.setOnClickListener(v -> {
-            Intent intent = new Intent(AllSettingActivity.this, FullscreenImageActivity.class);
-            intent.putExtra("image_resource", R.drawable.profile);
-            startActivity(intent);
+            if (profileImageUrl != null) {
+                Intent intent = new Intent(AllSettingActivity.this, FullscreenImageActivity.class);
+                intent.putExtra("image_url", profileImageUrl);
+                startActivity(intent);
+            } else {
+                Toast.makeText(AllSettingActivity.this, "No profile image available", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Back button click listener
@@ -122,6 +142,58 @@ public class AllSettingActivity extends AppCompatActivity {
         exitLayout.setOnClickListener(v -> {
             finishAffinity();
             System.exit(0);
+        });
+    }
+
+    // Method to fetch user data and load profile image
+    private void fetchAndLoadProfileImage() {
+        Glide.with(this).clear(profileImage); // Clear existing image to avoid cache issues
+        UserController userController = new UserController(this, null);
+        userController.getCurrentUser(RetrofitClient.getAccessToken(this), new UserController.UserDataCallback() {
+            @Override
+            public void onSuccess(UserData userData) {
+                String profileImagePath = userData.getProfileImage();
+                Log.d(TAG, "Profile image path from API: " + profileImagePath);
+
+                if (profileImagePath != null && !profileImagePath.isEmpty()) {
+                    if (profileImagePath.startsWith("http://") || profileImagePath.startsWith("https://")) {
+                        profileImageUrl = profileImagePath;
+                        Log.d(TAG, "Using full URL from API: " + profileImageUrl);
+                    } else {
+                        profileImageUrl = BASE_URL + (profileImagePath.startsWith("/storage/") ? "" : "/storage/") + profileImagePath;
+                        Log.d(TAG, "Constructed URL: " + profileImageUrl);
+                    }
+
+                    String accessToken = RetrofitClient.getAccessToken(AllSettingActivity.this);
+                    GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                            ? new GlideUrl(profileImageUrl, new LazyHeaders.Builder()
+                            .addHeader("Authorization", "Bearer " + accessToken)
+                            .build())
+                            : new GlideUrl(profileImageUrl);
+
+                    RequestOptions requestOptions = new RequestOptions()
+                            .placeholder(R.drawable.profile)
+                            .error(R.drawable.profile)
+                            .circleCrop();
+
+                    Glide.with(AllSettingActivity.this)
+                            .load(glideUrl)
+                            .apply(requestOptions)
+                            .into(profileImage);
+                } else {
+                    Log.d(TAG, "No profile image found, using default");
+                    profileImage.setImageResource(R.drawable.profile);
+                    profileImageUrl = null; // No URL to pass if default is used
+                }
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.e(TAG, "Failed to fetch user: " + errorMessage);
+                Toast.makeText(AllSettingActivity.this, "Failed to load profile", Toast.LENGTH_SHORT).show();
+                profileImage.setImageResource(R.drawable.profile); // Fallback
+                profileImageUrl = null; // No URL to pass on failure
+            }
         });
     }
 }

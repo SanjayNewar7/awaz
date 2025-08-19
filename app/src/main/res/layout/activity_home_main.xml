@@ -31,7 +31,6 @@
             android:layout_height="36dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/profile"
             android:scaleType="centerCrop"
             android:contentDescription="Profile"
             app:shapeAppearanceOverlay="@style/CircleImage" />

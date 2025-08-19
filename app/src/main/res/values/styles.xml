@@ -4,6 +4,7 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
+
 <style name="TabButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
 <item name="android:layout_margin">4dp</item>
 <item name="android:minHeight">36dp</item>
@@ -17,6 +18,13 @@
 <item name="cornerRadius">20dp</item>
 <item name="backgroundTint">@android:color/transparent</item>
 </style>
+
+
+    <!-- Style for circular ShapeableImageView -->
+    <style name="CircleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 
     <!-- Selected tab button -->
     <style name="TabButton.Selected" parent="Widget.MaterialComponents.Button">

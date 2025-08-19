@@ -3,24 +3,37 @@ package com.example.awaz.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.awaz.R;
+import com.example.awaz.controller.UserController;
+import com.example.awaz.model.UserData;
+import com.example.awaz.service.RetrofitClient;
 import com.google.android.material.imageview.ShapeableImageView;
 
 public class ProfileActivity extends AppCompatActivity {
+    private static final String TAG = "ProfileActivity";
+    private static final String BASE_URL = "http://192.168.1.70:8000"; // Your server base URL
     private boolean isLiked = false;
     private ImageView likeButton;
     private Handler handler = new Handler();
     private PopupWindow popupWindow;
+    private ShapeableImageView profileImage; // Profile image view
+    private String profileImageUrl; // To store the dynamically loaded image URL
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Initialize UI elements
         ImageView back = findViewById(R.id.backArrow);
-        ShapeableImageView profileImage = findViewById(R.id.profile_image);
+        profileImage = findViewById(R.id.profile_image);
         likeButton = findViewById(R.id.likeButton);
 
         // Initialize filter buttons
@@ -42,6 +55,9 @@ public class ProfileActivity extends AppCompatActivity {
         TextView filterEvents = findViewById(R.id.filterMore1); // Assuming More1 is Events
         TextView filterMore = findViewById(R.id.filterMore2);
 
+        // Fetch and load profile image dynamically
+        fetchAndLoadProfileImage();
+
         // Set click listener for back arrow
         back.setOnClickListener(view -> {
             Intent intent = new Intent(ProfileActivity.this, HomeMainActivity.class);
@@ -50,9 +66,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Set click listener for profile image
         profileImage.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, FullscreenImageActivity.class);
-            intent.putExtra("image_resource", R.drawable.profile);
-            startActivity(intent);
+            if (profileImageUrl != null) {
+                Intent intent = new Intent(ProfileActivity.this, FullscreenImageActivity.class);
+                intent.putExtra("image_url", profileImageUrl);
+                startActivity(intent);
+            } else {
+                Toast.makeText(ProfileActivity.this, "No profile image available", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // Set click listener for like button
@@ -89,6 +109,58 @@ public class ProfileActivity extends AppCompatActivity {
         if (filterLights != null) filterLights.setOnClickListener(filterClickListener);
         if (filterEvents != null) filterEvents.setOnClickListener(filterClickListener);
         if (filterMore != null) filterMore.setOnClickListener(filterClickListener);
+    }
+
+    // Method to fetch user data and load profile image
+    private void fetchAndLoadProfileImage() {
+        Glide.with(this).clear(profileImage); // Clear existing image to avoid cache issues
+        UserController userController = new UserController(this, null);
+        userController.getCurrentUser(RetrofitClient.getAccessToken(this), new UserController.UserDataCallback() {
+            @Override
+            public void onSuccess(UserData userData) {
+                String profileImagePath = userData.getProfileImage();
+                Log.d(TAG, "Profile image path from API: " + profileImagePath);
+
+                if (profileImagePath != null && !profileImagePath.isEmpty()) {
+                    if (profileImagePath.startsWith("http://") || profileImagePath.startsWith("https://")) {
+                        profileImageUrl = profileImagePath;
+                        Log.d(TAG, "Using full URL from API: " + profileImageUrl);
+                    } else {
+                        profileImageUrl = BASE_URL + (profileImagePath.startsWith("/storage/") ? "" : "/storage/") + profileImagePath;
+                        Log.d(TAG, "Constructed URL: " + profileImageUrl);
+                    }
+
+                    String accessToken = RetrofitClient.getAccessToken(ProfileActivity.this);
+                    GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                            ? new GlideUrl(profileImageUrl, new LazyHeaders.Builder()
+                            .addHeader("Authorization", "Bearer " + accessToken)
+                            .build())
+                            : new GlideUrl(profileImageUrl);
+
+                    RequestOptions requestOptions = new RequestOptions()
+                            .placeholder(R.drawable.profile)
+                            .error(R.drawable.profile)
+                            .circleCrop();
+
+                    Glide.with(ProfileActivity.this)
+                            .load(glideUrl)
+                            .apply(requestOptions)
+                            .into(profileImage);
+                } else {
+                    Log.d(TAG, "No profile image found, using default");
+                    profileImage.setImageResource(R.drawable.profile);
+                    profileImageUrl = null; // No URL to pass if default is used
+                }
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.e(TAG, "Failed to fetch user: " + errorMessage);
+                Toast.makeText(ProfileActivity.this, "Failed to load profile", Toast.LENGTH_SHORT).show();
+                profileImage.setImageResource(R.drawable.profile); // Fallback
+                profileImageUrl = null; // No URL to pass on failure
+            }
+        });
     }
 
     // Method to set the background of a filter button
