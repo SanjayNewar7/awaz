@@ -113,7 +113,6 @@
                             android:id="@+id/frontImage"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/citizenship_front"
                             android:scaleType="fitCenter"
                             android:adjustViewBounds="true" />
                     </androidx.cardview.widget.CardView>
@@ -139,7 +138,6 @@
                             android:id="@+id/backImage"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/citizenship_back"
                             android:scaleType="fitCenter"
                             android:adjustViewBounds="true" />
                     </androidx.cardview.widget.CardView>

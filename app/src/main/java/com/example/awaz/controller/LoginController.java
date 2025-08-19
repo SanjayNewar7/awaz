@@ -69,6 +69,7 @@ public class LoginController {
         LoginRequest loginRequest = new LoginRequest(emailOrUsername, password);
         Call<LoginResponse> call = apiService.userLogin(loginRequest);
 
+
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -93,6 +94,7 @@ public class LoginController {
                     // Store the access token
                     // When storing the token from login response:
                     RetrofitClient.setAccessToken(response.body().getAccessToken(), context);
+                    Log.d(TAG, "Login successful, saved token: ****" + loginResponse.getAccessToken().substring(loginResponse.getAccessToken().length() - 4));
 
 
 

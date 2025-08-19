@@ -3,23 +3,36 @@ package com.example.awaz.model;
 import com.google.gson.annotations.SerializedName;
 
 public class UserResponse {
-    @SerializedName("user")
-    private UserData user;
-    @SerializedName("message")
-    private String message;
     @SerializedName("status")
     private String status;
 
-    // Getters and setters
-    public UserData getUser() {
-        return user;
+    @SerializedName("message")
+    private String message;
+
+    @SerializedName("user")
+    private UserData user;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public String getStatus() {
-        return status;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public UserData getUser() {
+        return user;
+    }
+
+    public void setUser(UserData user) {
+        this.user = user;
     }
 }

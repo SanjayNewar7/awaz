@@ -1,7 +1,5 @@
 package com.example.awaz.model;
 
-
-
 import com.google.gson.annotations.SerializedName;
 
 public class LoginRequest {
