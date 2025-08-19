@@ -54,6 +54,12 @@ public class UserData {
     @SerializedName("is_verified")
     private boolean isVerified;
 
+    @SerializedName("likes_count")  // Added
+    private int likesCount;
+
+    @SerializedName("posts_count")  // Added
+    private int postsCount;
+
     public int getUserId() { return userId; }
     public String getUsername() { return username; }
     public String getFirstName() { return firstName; }
@@ -71,4 +77,7 @@ public class UserData {
     public String getCitizenshipBackImage() { return citizenshipBackImage; }
     public String getCitizenshipIdNumber() { return citizenshipIdNumber; }
     public boolean isVerified() { return isVerified; }
+
+    public int getLikesCount() { return likesCount; }
+    public int getPostsCount() { return postsCount; }
 }
