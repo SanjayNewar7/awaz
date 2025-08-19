@@ -34,6 +34,11 @@ public class ProfileActivity extends AppCompatActivity {
     private PopupWindow popupWindow;
     private ShapeableImageView profileImage; // Profile image view
     private String profileImageUrl; // To store the dynamically loaded image URL
+    private TextView userNameTextView;
+    private TextView userLocationTextView;
+    private TextView postsCountTextView;
+    private TextView likesCountTextView;
+    private TextView userDescriptionTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,11 @@ public class ProfileActivity extends AppCompatActivity {
         ImageView back = findViewById(R.id.backArrow);
         profileImage = findViewById(R.id.profile_image);
         likeButton = findViewById(R.id.likeButton);
+        userNameTextView = findViewById(R.id.userName);
+        userLocationTextView = findViewById(R.id.userLocation);
+        postsCountTextView = findViewById(R.id.postsCount);
+        likesCountTextView = findViewById(R.id.likesCount); // Assuming an ID for likes count
+        userDescriptionTextView = findViewById(R.id.userDescription);
 
         // Initialize filter buttons
         TextView filterAll = findViewById(R.id.filterAll);
@@ -55,8 +65,8 @@ public class ProfileActivity extends AppCompatActivity {
         TextView filterEvents = findViewById(R.id.filterMore1); // Assuming More1 is Events
         TextView filterMore = findViewById(R.id.filterMore2);
 
-        // Fetch and load profile image dynamically
-        fetchAndLoadProfileImage();
+        // Fetch and load profile image and user data dynamically
+        fetchAndLoadProfileImageAndData();
 
         // Set click listener for back arrow
         back.setOnClickListener(view -> {
@@ -112,7 +122,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     // Method to fetch user data and load profile image
-    private void fetchAndLoadProfileImage() {
+    // Method to fetch user data and load profile image
+    private void fetchAndLoadProfileImageAndData() {
         Glide.with(this).clear(profileImage); // Clear existing image to avoid cache issues
         UserController userController = new UserController(this, null);
         userController.getCurrentUser(RetrofitClient.getAccessToken(this), new UserController.UserDataCallback() {
@@ -149,7 +160,43 @@ public class ProfileActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "No profile image found, using default");
                     profileImage.setImageResource(R.drawable.profile);
-                    profileImageUrl = null; // No URL to pass if default is used
+                    profileImageUrl = null;
+                }
+
+                // Update user name (first_name + last_name)
+                if (userData.getFirstName() != null && userData.getLastName() != null) {
+                    String fullName = userData.getFirstName() + " " + userData.getLastName();
+                    userNameTextView.setText(fullName);
+                } else {
+                    userNameTextView.setText("Unknown User");
+                }
+
+                // Update user location (city-ward, district)
+                String city = userData.getCity() != null ? userData.getCity() : "";
+                String district = userData.getDistrict() != null ? userData.getDistrict() : "";
+                int ward = userData.getWard(); // Assuming getWard() returns int, default to 0 if not set
+                if (!city.isEmpty() && district.isEmpty()) {
+                    userLocationTextView.setText(city);
+                } else if (city.isEmpty() && !district.isEmpty()) {
+                    userLocationTextView.setText(district);
+                } else if (!city.isEmpty() && !district.isEmpty()) {
+                    String location = city + "-" + ward + ", " + district;
+                    userLocationTextView.setText(location);
+                } else {
+                    userLocationTextView.setText("Unknown Location");
+                }
+
+                // Update posts and likes count
+                int postsCount = userData.getPostsCount() != 0 ? userData.getPostsCount() : 0;
+                postsCountTextView.setText(postsCount + " Posts");
+                int likesCount = userData.getLikesCount() != 0 ? userData.getLikesCount() : 0;
+                likesCountTextView.setText("   " + likesCount + " Likes");
+
+                // Update user description (bio)
+                if (userData.getBio() != null) {
+                    userDescriptionTextView.setText(userData.getBio());
+                } else {
+                    userDescriptionTextView.setText("No bio available.");
                 }
             }
 
@@ -157,8 +204,13 @@ public class ProfileActivity extends AppCompatActivity {
             public void onFailure(String errorMessage) {
                 Log.e(TAG, "Failed to fetch user: " + errorMessage);
                 Toast.makeText(ProfileActivity.this, "Failed to load profile", Toast.LENGTH_SHORT).show();
-                profileImage.setImageResource(R.drawable.profile); // Fallback
-                profileImageUrl = null; // No URL to pass on failure
+                profileImage.setImageResource(R.drawable.profile);
+                profileImageUrl = null;
+                userNameTextView.setText("Unknown User");
+                userLocationTextView.setText("Unknown Location");
+                postsCountTextView.setText("0 Posts");
+                likesCountTextView.setText("   0 Likes");
+                userDescriptionTextView.setText("No bio available.");
             }
         });
     }
