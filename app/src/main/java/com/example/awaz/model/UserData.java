@@ -54,30 +54,75 @@ public class UserData {
     @SerializedName("is_verified")
     private boolean isVerified;
 
-    @SerializedName("likes_count")  // Added
+    @SerializedName("likes_count")
     private int likesCount;
 
-    @SerializedName("posts_count")  // Added
+    @SerializedName("posts_count")
     private int postsCount;
 
     public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
     public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
     public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
     public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
     public String getDistrict() { return district; }
-    public int getWard() { return ward; }
+    public void setDistrict(String district) { this.district = district; }
     public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+    public int getWard() { return ward; }
+    public void setWard(int ward) { this.ward = ward; }
     public String getAreaName() { return areaName; }
+    public void setAreaName(String areaName) { this.areaName = areaName; }
     public String getPhoneNumber() { return phoneNumber; }
-    public String getGender() { return gender; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
     public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
     public String getProfileImage() { return profileImage; }
-    public String getCitizenshipFrontImage() { return citizenshipFrontImage; }
-    public String getCitizenshipBackImage() { return citizenshipBackImage; }
-    public String getCitizenshipIdNumber() { return citizenshipIdNumber; }
-    public boolean isVerified() { return isVerified; }
-
-    public int getLikesCount() { return likesCount; }
+    public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
     public int getPostsCount() { return postsCount; }
+    public void setPostsCount(int postsCount) { this.postsCount = postsCount; }
+    public int getLikesCount() { return likesCount; }
+    public void setLikesCount(int likesCount) { this.likesCount = likesCount; }
+
+    // Added missing getter methods
+    public String getCitizenshipFrontImage() { return citizenshipFrontImage; }
+    public void setCitizenshipFrontImage(String citizenshipFrontImage) { this.citizenshipFrontImage = citizenshipFrontImage; }
+
+    public String getCitizenshipBackImage() { return citizenshipBackImage; }
+    public void setCitizenshipBackImage(String citizenshipBackImage) { this.citizenshipBackImage = citizenshipBackImage; }
+
+    public String getCitizenshipIdNumber() { return citizenshipIdNumber; }
+    public void setCitizenshipIdNumber(String citizenshipIdNumber) { this.citizenshipIdNumber = citizenshipIdNumber; }
+
+    public boolean isVerified() { return isVerified; }
+    public void setVerified(boolean verified) { this.isVerified = verified; }
+
+    @Override
+    public String toString() {
+        return "UserData{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", district='" + district + '\'' +
+                ", city='" + city + '\'' +
+                ", ward=" + ward +
+                ", areaName='" + areaName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", bio='" + bio + '\'' +
+                ", profileImage='" + profileImage + '\'' +
+                ", citizenshipFrontImage='" + citizenshipFrontImage + '\'' +
+                ", citizenshipBackImage='" + citizenshipBackImage + '\'' +
+                ", citizenshipIdNumber='" + citizenshipIdNumber + '\'' +
+                ", isVerified=" + isVerified +
+                ", postsCount=" + postsCount +
+                ", likesCount=" + likesCount +
+                '}';
+    }
 }

@@ -33,6 +33,7 @@ public class HomeMainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private Fragment currentFragment;
     private ShapeableImageView imgProfile; // Profile image view
+    private int currentUserId = -1; // To store the current user's ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,8 +89,13 @@ public class HomeMainActivity extends AppCompatActivity {
         });
 
         imgProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeMainActivity.this, ProfileActivity.class);
-            startActivity(intent);
+            if (currentUserId != -1) {
+                Intent intent = new Intent(HomeMainActivity.this, ProfileActivity.class);
+                intent.putExtra("user_id", currentUserId); // Pass current user ID
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "User ID not loaded yet", Toast.LENGTH_SHORT).show();
+            }
         });
 
         settingLayout.setOnClickListener(v -> {
@@ -110,38 +116,45 @@ public class HomeMainActivity extends AppCompatActivity {
         userController.getCurrentUser(RetrofitClient.getAccessToken(this), new UserController.UserDataCallback() {
             @Override
             public void onSuccess(UserData userData) {
-                String profileImagePath = userData.getProfileImage();
-                Log.d(TAG, "Profile image path from API: " + profileImagePath);
+                if (userData != null) {
+                    currentUserId = userData.getUserId(); // Store the current user's ID
+                    Log.d(TAG, "Current userId set to: " + currentUserId);
 
-                String imageUrl;
-                if (profileImagePath != null && !profileImagePath.isEmpty()) {
-                    if (profileImagePath.startsWith("http://") || profileImagePath.startsWith("https://")) {
-                        imageUrl = profileImagePath;
-                        Log.d(TAG, "Using full URL from API: " + imageUrl);
+                    String profileImagePath = userData.getProfileImage();
+                    Log.d(TAG, "Profile image path from API: " + profileImagePath);
+
+                    String imageUrl;
+                    if (profileImagePath != null && !profileImagePath.isEmpty()) {
+                        if (profileImagePath.startsWith("http://") || profileImagePath.startsWith("https://")) {
+                            imageUrl = profileImagePath;
+                            Log.d(TAG, "Using full URL from API: " + imageUrl);
+                        } else {
+                            imageUrl = BASE_URL + (profileImagePath.startsWith("/storage/") ? "" : "/storage/") + profileImagePath;
+                            Log.d(TAG, "Constructed URL: " + imageUrl);
+                        }
+
+                        String accessToken = RetrofitClient.getAccessToken(HomeMainActivity.this);
+                        GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                                ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                                .addHeader("Authorization", "Bearer " + accessToken)
+                                .build())
+                                : new GlideUrl(imageUrl);
+
+                        RequestOptions requestOptions = new RequestOptions()
+                                .placeholder(R.drawable.profile)
+                                .error(R.drawable.profile)
+                                .circleCrop();
+
+                        Glide.with(HomeMainActivity.this)
+                                .load(glideUrl)
+                                .apply(requestOptions)
+                                .into(imgProfile);
                     } else {
-                        imageUrl = BASE_URL + (profileImagePath.startsWith("/storage/") ? "" : "/storage/") + profileImagePath;
-                        Log.d(TAG, "Constructed URL: " + imageUrl);
+                        Log.d(TAG, "No profile image found, using default");
+                        imgProfile.setImageResource(R.drawable.profile);
                     }
-
-                    String accessToken = RetrofitClient.getAccessToken(HomeMainActivity.this);
-                    GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
-                            ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
-                            .addHeader("Authorization", "Bearer " + accessToken)
-                            .build())
-                            : new GlideUrl(imageUrl);
-
-                    RequestOptions requestOptions = new RequestOptions()
-                            .placeholder(R.drawable.profile)
-                            .error(R.drawable.profile)
-                            .circleCrop();
-
-                    Glide.with(HomeMainActivity.this)
-                            .load(glideUrl)
-                            .apply(requestOptions)
-                            .into(imgProfile);
                 } else {
-                    Log.d(TAG, "No profile image found, using default");
-                    imgProfile.setImageResource(R.drawable.profile);
+                    Log.e(TAG, "UserData is null");
                 }
             }
 

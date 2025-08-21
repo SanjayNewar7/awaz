@@ -4,10 +4,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.awaz.model.CommentRequest;
+import com.example.awaz.model.CommentResponse;
+import com.example.awaz.model.CommentsResponse;
 import com.example.awaz.model.IssueRequest;
 import com.example.awaz.model.IssueResponse;
+import com.example.awaz.model.IssuesResponse;
 import com.example.awaz.model.LoginRequest;
 import com.example.awaz.model.LoginResponse;
+import com.example.awaz.model.PostsResponse;
+import com.example.awaz.model.ReactionRequest;
+import com.example.awaz.model.ReactionResponse;
 import com.example.awaz.model.SignupRequest;
 import com.example.awaz.model.SignupResponse;
 import com.example.awaz.model.UserResponse;
@@ -23,6 +30,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 public class RetrofitClient {
     private static final String TAG = "RetrofitClient";
@@ -30,6 +38,10 @@ public class RetrofitClient {
     private static Retrofit retrofit = null;
     private static final String PREF_NAME = "AuthPrefs";
     private static final String KEY_ACCESS_TOKEN = "access_token";
+
+    public static String getBaseUrl() {
+        return BASE_URL;
+    }
 
     public static ApiService getApiService(Context context) {
         if (retrofit == null) {
@@ -40,10 +52,8 @@ public class RetrofitClient {
 
                 Log.d(TAG, "Using token: " + (token != null ? "****" + token.substring(Math.max(0, token.length() - 4)) : "NULL"));
 
-                // In RetrofitClient.java, ensure you're sending the token correctly:
                 Request.Builder requestBuilder = original.newBuilder();
                 if (token != null) {
-                    // Sanctum works with both formats, but standard is "Bearer [token]"
                     requestBuilder.header("Authorization", "Bearer " + token);
                 }
                 requestBuilder.header("Content-Type", "application/json")
@@ -81,6 +91,10 @@ public class RetrofitClient {
     }
 
     public interface ApiService {
+        @GET("users/{userId}")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Call<UserResponse> getUser(@Path("userId") int userId); // Updated to UserResponse
+
         @POST("api/users")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         Call<SignupResponse> signup(@Body SignupRequest signupRequest);
@@ -100,5 +114,25 @@ public class RetrofitClient {
         @PUT("api/users/me")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         Call<UserResponse> updateUser(@Body JsonObject updateData);
+
+        @GET("api/issues")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Call<IssuesResponse> getIssues();
+
+        @POST("api/issues/{id}/react")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Call<ReactionResponse> addReaction(@Path("id") int issueId, @Body ReactionRequest reactionRequest);
+
+        @POST("api/issues/{id}/comment")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Call<CommentResponse> addComment(@Path("id") int issueId, @Body CommentRequest commentRequest);
+
+        @GET("api/issues/{id}/comments")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Call<CommentsResponse> getComments(@Path("id") int issueId);
+
+        @GET("api/posts")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Call<PostsResponse> getPosts();
     }
 }

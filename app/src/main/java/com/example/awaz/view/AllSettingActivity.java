@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -33,7 +34,9 @@ public class AllSettingActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private ShapeableImageView profileImage;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
-    private String profileImageUrl; // To store the dynamically loaded image URL
+    private String profileImageUrl;
+    private TextView userNameTextView;
+    private TextView phoneNumberTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +56,11 @@ public class AllSettingActivity extends AppCompatActivity {
         LinearLayout aboutUsLayout = findViewById(R.id.aboutUsLayout);
         LinearLayout exitLayout = findViewById(R.id.exitLayout);
         ImageView back = findViewById(R.id.backArrow);
+        userNameTextView = findViewById(R.id.user_name); // Assuming IDs will be added
+        phoneNumberTextView = findViewById(R.id.phone_number); // Assuming IDs will be added
 
-        // Fetch and load profile image dynamically
-        fetchAndLoadProfileImage();
+        // Fetch and load profile image and user data dynamically
+        fetchAndLoadProfileImageAndData();
 
         // Initialize image picker launcher
         imagePickerLauncher = registerForActivityResult(
@@ -73,7 +78,6 @@ public class AllSettingActivity extends AppCompatActivity {
                     .setTitle("Update Profile Image")
                     .setMessage("Do you want to update your profile image?")
                     .setPositiveButton("Yes", (dialog, which) -> {
-                        // Open image picker
                         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         imagePickerLauncher.launch(intent);
                     })
@@ -146,7 +150,7 @@ public class AllSettingActivity extends AppCompatActivity {
     }
 
     // Method to fetch user data and load profile image
-    private void fetchAndLoadProfileImage() {
+    private void fetchAndLoadProfileImageAndData() {
         Glide.with(this).clear(profileImage); // Clear existing image to avoid cache issues
         UserController userController = new UserController(this, null);
         userController.getCurrentUser(RetrofitClient.getAccessToken(this), new UserController.UserDataCallback() {
@@ -183,7 +187,21 @@ public class AllSettingActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "No profile image found, using default");
                     profileImage.setImageResource(R.drawable.profile);
-                    profileImageUrl = null; // No URL to pass if default is used
+                    profileImageUrl = null;
+                }
+
+                // Update TextViews with user data
+                if (userData.getFirstName() != null && userData.getLastName() != null) {
+                    String fullName = userData.getFirstName() + " " + userData.getLastName();
+                    userNameTextView.setText(fullName);
+                } else {
+                    userNameTextView.setText("Unknown User");
+                }
+
+                if (userData.getPhoneNumber() != null) {
+                    phoneNumberTextView.setText(userData.getPhoneNumber());
+                } else {
+                    phoneNumberTextView.setText("N/A");
                 }
             }
 
@@ -191,8 +209,10 @@ public class AllSettingActivity extends AppCompatActivity {
             public void onFailure(String errorMessage) {
                 Log.e(TAG, "Failed to fetch user: " + errorMessage);
                 Toast.makeText(AllSettingActivity.this, "Failed to load profile", Toast.LENGTH_SHORT).show();
-                profileImage.setImageResource(R.drawable.profile); // Fallback
-                profileImageUrl = null; // No URL to pass on failure
+                profileImage.setImageResource(R.drawable.profile);
+                profileImageUrl = null;
+                userNameTextView.setText("Unknown User");
+                phoneNumberTextView.setText("N/A");
             }
         });
     }
