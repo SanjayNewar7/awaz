@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 import com.example.awaz.model.UserData;
 import com.example.awaz.model.UserResponse;
 import com.example.awaz.service.RetrofitClient;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import retrofit2.Call;
@@ -19,6 +20,11 @@ public class UserController {
     private final Context context;
     private final ProgressBar progressBar;
 
+    public UserController(Context context, ProgressBar progressBar) {
+        this.context = context;
+        this.progressBar = progressBar;
+    }
+
     public interface UserDataCallback {
         void onSuccess(UserData userData);
         void onFailure(String errorMessage);
@@ -27,11 +33,6 @@ public class UserController {
     public interface UserUpdateCallback {
         void onSuccess(UserData updatedUser);
         void onFailure(String errorMessage);
-    }
-
-    public UserController(Context context, ProgressBar progressBar) {
-        this.context = context;
-        this.progressBar = progressBar;
     }
 
     private void showLoading() {
@@ -97,7 +98,6 @@ public class UserController {
         });
     }
 
-    // Update the updateUser method to handle ward as integer
     public void updateUser(String accessToken,
                            String district, String city, int ward,
                            String areaName, String phoneNumber,
@@ -137,6 +137,55 @@ public class UserController {
                     try {
                         if (response.errorBody() != null) {
                             errorMsg = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing error response", e);
+                    }
+                    Log.e(TAG, errorMsg);
+                    callback.onFailure(errorMsg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                hideLoading();
+                String errorMsg = "Network error: " + t.getMessage();
+                Log.e(TAG, errorMsg, t);
+                callback.onFailure(errorMsg);
+            }
+        });
+    }
+
+    public void getUserById(int userId, String accessToken, UserDataCallback callback) {
+        showLoading();
+
+        RetrofitClient.ApiService apiService = RetrofitClient.getApiService(context);
+        Call<UserResponse> call = apiService.getUser(userId); // Updated to UserResponse
+
+        call.enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                hideLoading();
+
+                if (response.isSuccessful() && response.body() != null) {
+                    UserResponse userResponse = response.body();
+                    Log.d(TAG, "API Response: " + new Gson().toJson(userResponse)); // Log full response
+                    if ("success".equals(userResponse.getStatus())) {
+                        UserData userData = userResponse.getUser();
+                        if (userData != null) {
+                            callback.onSuccess(userData);
+                        } else {
+                            callback.onFailure("User data is null in response");
+                        }
+                    } else {
+                        String errorMsg = userResponse.getMessage() != null ? userResponse.getMessage() : "Failed to fetch user data";
+                        callback.onFailure(errorMsg);
+                    }
+                } else {
+                    String errorMsg = "Failed to fetch user with ID: " + userId + ". Status: " + response.code();
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMsg += ", Error Body: " + response.errorBody().string();
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing error response", e);

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -27,67 +28,71 @@ import com.google.android.material.imageview.ShapeableImageView;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
-    private static final String BASE_URL = "http://192.168.1.70:8000"; // Your server base URL
+    private static final String BASE_URL = "http://192.168.1.70:8000";
     private boolean isLiked = false;
     private ImageView likeButton;
     private Handler handler = new Handler();
     private PopupWindow popupWindow;
-    private ShapeableImageView profileImage; // Profile image view
-    private String profileImageUrl; // To store the dynamically loaded image URL
+    private ShapeableImageView profileImage;
+    private String profileImageUrl;
     private TextView userNameTextView;
     private TextView userLocationTextView;
     private TextView postsCountTextView;
     private TextView likesCountTextView;
     private TextView userDescriptionTextView;
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_activity);
 
-        // Initialize UI elements
         ImageView back = findViewById(R.id.backArrow);
         profileImage = findViewById(R.id.profile_image);
         likeButton = findViewById(R.id.likeButton);
         userNameTextView = findViewById(R.id.userName);
         userLocationTextView = findViewById(R.id.userLocation);
         postsCountTextView = findViewById(R.id.postsCount);
-        likesCountTextView = findViewById(R.id.likesCount); // Assuming an ID for likes count
+        likesCountTextView = findViewById(R.id.likesCount);
         userDescriptionTextView = findViewById(R.id.userDescription);
 
-        // Initialize filter buttons
         TextView filterAll = findViewById(R.id.filterAll);
         TextView filterRoad = findViewById(R.id.filterRoad);
         TextView filterElectricity = findViewById(R.id.filterElectricity);
         TextView filterSanitary = findViewById(R.id.filterSanitary);
         TextView filterWater = findViewById(R.id.filterWater);
         TextView filterLights = findViewById(R.id.filterLights);
-        TextView filterEvents = findViewById(R.id.filterMore1); // Assuming More1 is Events
+        TextView filterEvents = findViewById(R.id.filterMore1);
         TextView filterMore = findViewById(R.id.filterMore2);
 
-        // Fetch and load profile image and user data dynamically
+        Intent intent = getIntent();
+        userId = intent.getIntExtra("user_id", -1);
+        Log.d(TAG, "Received userId: " + userId);
+        if (userId == -1) {
+            Toast.makeText(this, "Error: User ID not found", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         fetchAndLoadProfileImageAndData();
 
-        // Set click listener for back arrow
         back.setOnClickListener(view -> {
-            Intent intent = new Intent(ProfileActivity.this, HomeMainActivity.class);
-            startActivity(intent);
+            Intent intentBack = new Intent(ProfileActivity.this, HomeMainActivity.class);
+            startActivity(intentBack);
         });
 
-        // Set click listener for profile image
         profileImage.setOnClickListener(v -> {
             if (profileImageUrl != null) {
-                Intent intent = new Intent(ProfileActivity.this, FullscreenImageActivity.class);
-                intent.putExtra("image_url", profileImageUrl);
-                startActivity(intent);
+                Intent intentGo = new Intent(ProfileActivity.this, FullscreenImageActivity.class);
+                intentGo.putExtra("image_url", profileImageUrl);
+                startActivity(intentGo);
             } else {
                 Toast.makeText(ProfileActivity.this, "No profile image available", Toast.LENGTH_SHORT).show();
             }
         });
 
-        // Set click listener for like button
         likeButton.setOnClickListener(v -> {
-            isLiked = !isLiked; // Toggle like state
+            isLiked = !isLiked;
             if (isLiked) {
                 likeButton.setImageResource(R.drawable.heart);
                 showPopup("You gave a heart");
@@ -97,20 +102,15 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        // Set initial state (e.g., "All" selected by default)
         setFilterBackground(filterAll, true);
         resetOtherFilters(filterAll);
 
-        // Add click listeners for filter buttons
         View.OnClickListener filterClickListener = v -> {
             TextView clickedFilter = (TextView) v;
             setFilterBackground(clickedFilter, true);
             resetOtherFilters(clickedFilter);
-            // Add your filtering logic here (e.g., update posts based on filter)
-            // Example: filterPosts(clickedFilter.getText().toString());
         };
 
-        // Attach click listeners to filter buttons (null checks included)
         if (filterAll != null) filterAll.setOnClickListener(filterClickListener);
         if (filterRoad != null) filterRoad.setOnClickListener(filterClickListener);
         if (filterElectricity != null) filterElectricity.setOnClickListener(filterClickListener);
@@ -121,17 +121,20 @@ public class ProfileActivity extends AppCompatActivity {
         if (filterMore != null) filterMore.setOnClickListener(filterClickListener);
     }
 
-    // Method to fetch user data and load profile image
-    // Method to fetch user data and load profile image
     private void fetchAndLoadProfileImageAndData() {
-        Glide.with(this).clear(profileImage); // Clear existing image to avoid cache issues
+        Glide.with(this).clear(profileImage);
         UserController userController = new UserController(this, null);
-        userController.getCurrentUser(RetrofitClient.getAccessToken(this), new UserController.UserDataCallback() {
+        userController.getUserById(userId, RetrofitClient.getAccessToken(this), new UserController.UserDataCallback() {
             @Override
             public void onSuccess(UserData userData) {
-                String profileImagePath = userData.getProfileImage();
-                Log.d(TAG, "Profile image path from API: " + profileImagePath);
+                Log.d(TAG, "Fetched user data: " + (userData != null ? userData.toString() : "null"));
+                if (userData == null) {
+                    Log.e(TAG, "UserData is null, check API response");
+                    onFailure("Received null user data");
+                    return;
+                }
 
+                String profileImagePath = userData.getProfileImage();
                 if (profileImagePath != null && !profileImagePath.isEmpty()) {
                     if (profileImagePath.startsWith("http://") || profileImagePath.startsWith("https://")) {
                         profileImageUrl = profileImagePath;
@@ -163,41 +166,22 @@ public class ProfileActivity extends AppCompatActivity {
                     profileImageUrl = null;
                 }
 
-                // Update user name (first_name + last_name)
-                if (userData.getFirstName() != null && userData.getLastName() != null) {
-                    String fullName = userData.getFirstName() + " " + userData.getLastName();
-                    userNameTextView.setText(fullName);
-                } else {
-                    userNameTextView.setText("Unknown User");
-                }
+                userNameTextView.setText((userData.getFirstName() != null && userData.getLastName() != null)
+                        ? userData.getFirstName() + " " + userData.getLastName() : "Unknown User");
 
-                // Update user location (city-ward, district)
                 String city = userData.getCity() != null ? userData.getCity() : "";
                 String district = userData.getDistrict() != null ? userData.getDistrict() : "";
-                int ward = userData.getWard(); // Assuming getWard() returns int, default to 0 if not set
-                if (!city.isEmpty() && district.isEmpty()) {
-                    userLocationTextView.setText(city);
-                } else if (city.isEmpty() && !district.isEmpty()) {
-                    userLocationTextView.setText(district);
-                } else if (!city.isEmpty() && !district.isEmpty()) {
-                    String location = city + "-" + ward + ", " + district;
-                    userLocationTextView.setText(location);
-                } else {
-                    userLocationTextView.setText("Unknown Location");
-                }
+                int ward = userData.getWard() != -1 ? userData.getWard() : 0;
+                userLocationTextView.setText(!city.isEmpty() && !district.isEmpty()
+                        ? city + "-" + ward + ", " + district
+                        : !city.isEmpty() ? city
+                        : !district.isEmpty() ? district
+                        : "Unknown Location");
 
-                // Update posts and likes count
-                int postsCount = userData.getPostsCount() != 0 ? userData.getPostsCount() : 0;
-                postsCountTextView.setText(postsCount + " Posts");
-                int likesCount = userData.getLikesCount() != 0 ? userData.getLikesCount() : 0;
-                likesCountTextView.setText("   " + likesCount + " Likes");
+                postsCountTextView.setText(userData.getPostsCount() + " Posts");
+                likesCountTextView.setText("   " + userData.getLikesCount() + " Likes");
 
-                // Update user description (bio)
-                if (userData.getBio() != null) {
-                    userDescriptionTextView.setText(userData.getBio());
-                } else {
-                    userDescriptionTextView.setText("No bio available.");
-                }
+                userDescriptionTextView.setText(userData.getBio() != null ? userData.getBio() : "No bio available.");
             }
 
             @Override
@@ -215,7 +199,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    // Method to set the background of a filter button
     private void setFilterBackground(TextView filter, boolean isSelected) {
         if (filter != null) {
             if (isSelected) {
@@ -228,7 +211,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    // Method to reset backgrounds of all other filters
     private void resetOtherFilters(TextView selectedFilter) {
         TextView[] filters = {
                 findViewById(R.id.filterAll),
@@ -248,31 +230,25 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void showPopup(String message) {
-        // Inflate the custom popup layout
         LayoutInflater inflater = LayoutInflater.from(this);
         View popupView = inflater.inflate(R.layout.popup_like_message, null);
 
-        // Set the message
         TextView popupText = popupView.findViewById(R.id.popup_text);
         popupText.setText(message);
 
-        // Configure icon tint based on message
         ImageView iconLike = popupView.findViewById(R.id.icon_like);
         if ("You removed heart".equals(message)) {
             iconLike.setImageTintList(ContextCompat.getColorStateList(this, R.color.black));
         } else if ("You gave a heart".equals(message)) {
-            iconLike.setImageTintList(null); // Use default red color of heart drawable
+            iconLike.setImageTintList(null);
         }
 
-        // Create and configure PopupWindow
-        popupWindow = new PopupWindow(popupView, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        popupWindow.setBackgroundDrawable(getResources().getDrawable(android.R.color.transparent)); // Required for dismissal
+        popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popupWindow.setBackgroundDrawable(getResources().getDrawable(android.R.color.transparent));
 
-        // Show at the center of the screen
         View rootView = findViewById(android.R.id.content);
         popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
 
-        // Dismiss after 1.5 seconds
         handler.postDelayed(() -> {
             if (popupWindow.isShowing()) {
                 popupWindow.dismiss();
@@ -283,7 +259,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacksAndMessages(null); // Clean up Handler
+        handler.removeCallbacksAndMessages(null);
         if (popupWindow != null && popupWindow.isShowing()) {
             popupWindow.dismiss();
         }

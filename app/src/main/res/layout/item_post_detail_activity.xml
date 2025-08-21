@@ -102,9 +102,10 @@
                         android:id="@+id/raisedIssueText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="raised an issue of "
+                        android:text=" raised an issue on "
                         android:textColor="@color/post_text"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:layout_marginStart="4dp" /> <!-- Added margin for space -->
 
                     <TextView
                         android:id="@+id/issueType"
@@ -152,7 +153,7 @@
                 android:id="@+id/postDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="The road near Ramghat, Ward 4 has been in a terrible condition for months. Potholes are everywhere, making it dangerous for pedestrians and vehicles. During rainy days, the situation worsens as water fills the potholes, causing accidents. Local residents, including school children and elderly people, are forced to take risky detours. Despite the concerns from the community, no action has been taken by the authorities."
+                android:text="The road near Ramghat, Ward 4 has been in a terrible condition for months..."
                 android:textColor="@color/post_text"
                 android:textSize="12sp" />
 
@@ -429,268 +430,14 @@
                     android:textStyle="bold"
                     android:paddingBottom="8dp" />
 
-                <LinearLayout
-                    android:id="@+id/dynamicComments"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerComments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <!-- Comment 1: Sumiksha Shrestha -->
-                    <LinearLayout
-                        android:id="@+id/comment1Container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp"
-                        android:layout_marginBottom="8dp">
-
-                        <LinearLayout
-                            android:id="@+id/comment1Header"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                            <com.google.android.material.imageview.ShapeableImageView
-                                android:id="@+id/comment1Profile"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="8dp"
-                                android:src="@drawable/sumikshya_shrestha"
-                                android:scaleType="centerCrop"
-                                android:contentDescription="Profile"
-                                app:shapeAppearanceOverlay="@style/CircleImage" />
-
-                            <TextView
-                                android:id="@+id/comment1Author"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Sumiksha Shrestha"
-                                android:textColor="@color/black"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/comment1Time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="2 hrs ago"
-                            android:textColor="@color/post_text"
-                            android:textSize="10sp"
-                            android:layout_marginStart="38dp"
-                            android:layout_marginTop="-10dp" />
-
-                        <TextView
-                            android:id="@+id/comment1Text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="The road was recently repaired by the municipal team. The potholes have been filled and it's much safer now."
-                            android:textColor="@color/post_text"
-                            android:textSize="12sp"
-                            android:layout_marginStart="38dp"
-                            android:layout_marginTop="4dp" />
-                    </LinearLayout>
-
-                    <!-- Comment 2: Sanjaya Gurung -->
-                    <LinearLayout
-                        android:id="@+id/comment2Container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp"
-                        android:layout_marginBottom="8dp">
-
-                        <LinearLayout
-                            android:id="@+id/comment2Header"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                            <com.google.android.material.imageview.ShapeableImageView
-                                android:id="@+id/comment2Profile"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="8dp"
-                                android:src="@drawable/sanjay_gurung"
-                                android:scaleType="centerCrop"
-                                android:contentDescription="Profile"
-                                app:shapeAppearanceOverlay="@style/CircleImage" />
-
-                            <TextView
-                                android:id="@+id/comment2Author"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Sanjaya Gurung"
-                                android:textColor="@color/black"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/comment2Time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1:30 mins ago"
-                            android:textColor="@color/post_text"
-                            android:textSize="10sp"
-                            android:layout_marginStart="38dp"
-                            android:layout_marginTop="-10dp" />
-
-                        <TextView
-                            android:id="@+id/comment2Text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="38dp"
-                            android:layout_marginTop="4dp"
-                            android:text="I passed through Ramghat yesterday, and the road looks newly patched. Seems like the issue has been fixed."
-                            android:textColor="@color/post_text"
-                            android:textSize="12sp" />
-
-                        <ImageView
-                            android:id="@+id/commentImage1"
-                            android:layout_width="150dp"
-                            android:layout_height="100dp"
-                            android:src="@drawable/sample4"
-                            android:contentDescription="Repaired Road Image"
-                            android:scaleType="centerCrop"
-                            android:layout_marginStart="38dp"
-                            android:layout_marginTop="4dp"
-                            android:clickable="true"
-                            android:focusable="true" />
-                    </LinearLayout>
-
-                    <!-- Comment 3: Arun Gurung -->
-                    <LinearLayout
-                        android:id="@+id/comment3Container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp"
-                        android:layout_marginBottom="8dp">
-
-                        <LinearLayout
-                            android:id="@+id/comment3Header"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                            <com.google.android.material.imageview.ShapeableImageView
-                                android:id="@+id/comment3Profile"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="8dp"
-                                android:src="@drawable/arun_gurung"
-                                android:scaleType="centerCrop"
-                                android:contentDescription="Profile"
-                                app:shapeAppearanceOverlay="@style/CircleImage" />
-
-                            <TextView
-                                android:id="@+id/comment3Author"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Arun Gurung"
-                                android:textColor="@color/black"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/comment3Time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="20 mins ago"
-                            android:textColor="@color/post_text"
-                            android:textSize="10sp"
-                            android:layout_marginStart="38dp"
-                            android:layout_marginTop="-10dp" />
-
-                        <TextView
-                            android:id="@+id/comment3Text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Thanks to the local ward office, the condition of the road is no longer a problem. Appreciate it!"
-                            android:textColor="@color/post_text"
-                            android:textSize="12sp"
-                            android:layout_marginStart="38dp"
-                            android:layout_marginTop="4dp" />
-                    </LinearLayout>
-
-                    <!-- Comment 4: Aakriti Shrestha -->
-                    <LinearLayout
-                        android:id="@+id/comment4Container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp"
-                        android:layout_marginBottom="8dp">
-
-                        <LinearLayout
-                            android:id="@+id/comment4Header"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                            <com.google.android.material.imageview.ShapeableImageView
-                                android:id="@+id/comment4Profile"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="8dp"
-                                android:src="@drawable/aakriti_shrestha"
-                                android:scaleType="centerCrop"
-                                android:contentDescription="Profile"
-                                app:shapeAppearanceOverlay="@style/CircleImage" />
-
-                            <TextView
-                                android:id="@+id/comment4Author"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Aakriti Shrestha"
-                                android:textColor="@color/black"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/comment4Time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="10 mins ago"
-                            android:textColor="@color/post_text"
-                            android:textSize="10sp"
-                            android:layout_marginStart="38dp"
-                            android:layout_marginTop="-10dp" />
-
-                        <TextView
-                            android:id="@+id/comment4Text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Spotted workers fixing it last week. Happy to see progress being made!"
-                            android:textColor="@color/post_text"
-                            android:textSize="12sp"
-                            android:layout_marginStart="38dp"
-                            android:layout_marginTop="4dp" />
-
-                        <ImageView
-                            android:id="@+id/commentImage2"
-                            android:layout_width="150dp"
-                            android:layout_height="100dp"
-                            android:src="@drawable/sample5"
-                            android:contentDescription="Repaired Road Image"
-                            android:scaleType="centerCrop"
-                            android:layout_marginStart="38dp"
-                            android:layout_marginTop="4dp"
-                            android:clickable="true"
-                            android:focusable="true" />
-                    </LinearLayout>
-                </LinearLayout>
+                    android:nestedScrollingEnabled="false" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
 
     <!-- New Comment Input Section -->
     <LinearLayout
@@ -701,6 +448,16 @@
         android:orientation="vertical"
         android:padding="12dp"
         android:background="@color/gray_light_light">
+
+        <!-- Image Preview for Comment -->
+        <ImageView
+            android:id="@+id/commentImagePreview"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:contentDescription="Comment Image Preview" />
 
         <!-- Input Row -->
         <LinearLayout
