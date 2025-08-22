@@ -152,7 +152,9 @@
         android:weightSum="5">
 
         <!-- Support -->
+        <!-- Support -->
         <LinearLayout
+            android:id="@+id/supportReaction"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
@@ -191,6 +193,7 @@
 
         <!-- Affected -->
         <LinearLayout
+            android:id="@+id/affectedReaction"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
@@ -229,6 +232,7 @@
 
         <!-- Not Sure -->
         <LinearLayout
+            android:id="@+id/notSureReaction"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
@@ -267,6 +271,7 @@
 
         <!-- Invalid -->
         <LinearLayout
+            android:id="@+id/invalidReaction"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
@@ -305,6 +310,7 @@
 
         <!-- Fixed -->
         <LinearLayout
+            android:id="@+id/fixedReaction"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"

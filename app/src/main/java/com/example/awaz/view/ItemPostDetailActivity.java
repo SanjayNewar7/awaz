@@ -30,6 +30,8 @@ import com.example.awaz.service.RetrofitClient;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,6 +45,7 @@ public class ItemPostDetailActivity extends AppCompatActivity {
     private CommentAdapter commentAdapter;
     private ActivityResultLauncher<String> imagePickerLauncher;
     private String selectedImageBase64;
+    private Map<String, Boolean> userReactions = new HashMap<>(); // Track user's reactions
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +93,7 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         binding.backArrow.setOnClickListener(v -> finish());
 
         // Set up reaction buttons
-        binding.supportReaction.setOnClickListener(v -> addReaction(post.getId(), "support"));
-        binding.affectedReaction.setOnClickListener(v -> addReaction(post.getId(), "affected"));
-        binding.notSureReaction.setOnClickListener(v -> addReaction(post.getId(), "not_sure"));
-        binding.invalidReaction.setOnClickListener(v -> addReaction(post.getId(), "invalid"));
-        binding.fixedReaction.setOnClickListener(v -> addReaction(post.getId(), "fixed"));
+        setupReactionListeners();
     }
 
     private void populatePostDetails() {
@@ -115,7 +114,7 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         if (profileImagePath != null && !profileImagePath.isEmpty()) {
             String imageUrl;
             if (profileImagePath.startsWith("http://") || profileImagePath.startsWith("https://")) {
-                imageUrl = profileImagePath; // Use full URL as-is
+                imageUrl = profileImagePath;
                 Log.d(TAG, "Using full URL for profile: " + imageUrl);
             } else {
                 imageUrl = RetrofitClient.getBaseUrl() + (profileImagePath.startsWith("/storage/") ? "" : "/storage/") + profileImagePath;
@@ -143,14 +142,14 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         // Set click listener for username
         binding.postAuthor.setOnClickListener(v -> {
             Intent intent = new Intent(ItemPostDetailActivity.this, ProfileActivity.class);
-            intent.putExtra("user_id", post.getUserId()); // Pass the user_id
+            intent.putExtra("user_id", post.getUserId());
             startActivity(intent);
         });
 
         // Set click listener for profile image
         binding.postAuthorProfile.setOnClickListener(v -> {
             Intent intent = new Intent(ItemPostDetailActivity.this, ProfileActivity.class);
-            intent.putExtra("user_id", post.getUserId()); // Pass the user_id
+            intent.putExtra("user_id", post.getUserId());
             startActivity(intent);
         });
 
@@ -217,12 +216,10 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     CommentResponse commentResponse = response.body();
                     if ("success".equals(commentResponse.getStatus())) {
-                        // Clear input fields
                         binding.commentInput.setText("");
                         binding.commentImagePreview.setVisibility(View.GONE);
                         selectedImageBase64 = null;
 
-                        // Add new comment to adapter
                         commentAdapter.addComment(commentResponse.getComment());
                         Toast.makeText(ItemPostDetailActivity.this, "Comment added", Toast.LENGTH_SHORT).show();
                     } else {
@@ -241,16 +238,47 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void setupReactionListeners() {
+        View.OnClickListener reactionListener = v -> {
+            String reactionType = "";
+            if (v.getId() == R.id.supportReaction) {
+                reactionType = "support";
+            } else if (v.getId() == R.id.affectedReaction) {
+                reactionType = "affected";
+            } else if (v.getId() == R.id.notSureReaction) {
+                reactionType = "not_sure";
+            } else if (v.getId() == R.id.invalidReaction) {
+                reactionType = "invalid";
+            } else if (v.getId() == R.id.fixedReaction) {
+                reactionType = "fixed";
+            }
+            addReaction(post.getId(), reactionType);
+        };
+
+        binding.supportReaction.setOnClickListener(reactionListener);
+        binding.affectedReaction.setOnClickListener(reactionListener);
+        binding.notSureReaction.setOnClickListener(reactionListener);
+        binding.invalidReaction.setOnClickListener(reactionListener);
+        binding.fixedReaction.setOnClickListener(reactionListener);
+    }
+
     private void addReaction(int postId, String reactionType) {
+        if (userReactions.size() >= 2 && !userReactions.containsKey(reactionType)) {
+            Toast.makeText(this, "You can only add up to 2 reactions per post", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.d(TAG, "Sending reaction for issue_id: " + post.getIssueId()); // Add logging
         RetrofitClient.ApiService apiService = RetrofitClient.getApiService(this);
         ReactionRequest reactionRequest = new ReactionRequest(reactionType);
-        Call<ReactionResponse> call = apiService.addReaction(postId, reactionRequest);
+        Call<ReactionResponse> call = apiService.addReaction(post.getIssueId(), reactionRequest);
 
         call.enqueue(new Callback<ReactionResponse>() {
             @Override
             public void onResponse(Call<ReactionResponse> call, Response<ReactionResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ReactionResponse reactionResponse = response.body();
+                    Log.d(TAG, "API Response: " + response.body().toString());
                     if ("success".equals(reactionResponse.getStatus())) {
                         // Update reaction counts
                         ReactionResponse.ReactionCount supportCount = reactionResponse.getReactionCounts().get("support");
@@ -265,12 +293,21 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                         if (invalidCount != null) binding.invalidCount.setText(String.valueOf(invalidCount.getCount()));
                         if (fixedCount != null) binding.fixedCount.setText(String.valueOf(fixedCount.getCount()));
 
-                        Toast.makeText(ItemPostDetailActivity.this, "Reaction added", Toast.LENGTH_SHORT).show();
+                        // Update local reaction state
+                        if (userReactions.containsKey(reactionType)) {
+                            userReactions.remove(reactionType); // Undo reaction
+                        } else {
+                            userReactions.put(reactionType, true); // Add new reaction
+                        }
+
+                        Toast.makeText(ItemPostDetailActivity.this, "Reaction " + (userReactions.containsKey(reactionType) ? "added" : "removed"), Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(ItemPostDetailActivity.this, "Failed to add reaction", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Failed reaction response: " + reactionResponse.getMessage());
+                        Toast.makeText(ItemPostDetailActivity.this, "Failed to add reaction: " + reactionResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(ItemPostDetailActivity.this, "Failed to add reaction", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Unsuccessful response: " + response.code() + " - " + response.message());
+                    Toast.makeText(ItemPostDetailActivity.this, "Failed to add reaction: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 

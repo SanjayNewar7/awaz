@@ -6,6 +6,9 @@ public class Post implements java.io.Serializable {
     @SerializedName("post_id")
     private int postId;
 
+    @SerializedName("issue_id")
+    private int issueId;
+
     @SerializedName("user_id")
     private int userId;
 
@@ -56,6 +59,8 @@ public class Post implements java.io.Serializable {
 
     // Getters and setters
     public int getId() { return postId; }
+    public int getIssueId() { return issueId; }
+    public void setIssueId(int issueId) { this.issueId = issueId; }
     public void setId(int postId) { this.postId = postId; }
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
@@ -89,4 +94,6 @@ public class Post implements java.io.Serializable {
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
     public String getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+
+
 }
