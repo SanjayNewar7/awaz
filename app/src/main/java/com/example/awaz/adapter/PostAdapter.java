@@ -94,6 +94,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 Log.d(TAG, "Constructed URL for profile: " + imageUrl);
             }
 
+
             String accessToken = RetrofitClient.getAccessToken(context);
             GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
                     ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
@@ -112,6 +113,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             Glide.with(context).load(R.drawable.profile)
                     .into((ImageView) holder.itemView.findViewById(R.id.postAuthorProfile));
         }
+
     }
 
     private void addReaction(int postId, String reactionType, PostViewHolder holder) {

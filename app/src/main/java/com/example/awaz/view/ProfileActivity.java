@@ -9,22 +9,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.awaz.R;
+import com.example.awaz.adapter.PostAdapter;
 import com.example.awaz.controller.UserController;
+import com.example.awaz.model.Post;
+import com.example.awaz.model.PostsResponse;
 import com.example.awaz.model.UserData;
 import com.example.awaz.service.RetrofitClient;
 import com.google.android.material.imageview.ShapeableImageView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
@@ -41,6 +54,10 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView likesCountTextView;
     private TextView userDescriptionTextView;
     private int userId;
+    private RecyclerView postsRecyclerView;
+    private PostAdapter postAdapter;
+    private List<Post> userPosts = new ArrayList<>();
+    private LinearLayout postsContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +72,18 @@ public class ProfileActivity extends AppCompatActivity {
         postsCountTextView = findViewById(R.id.postsCount);
         likesCountTextView = findViewById(R.id.likesCount);
         userDescriptionTextView = findViewById(R.id.userDescription);
+        postsContainer = findViewById(R.id.postsContainer);
+
+        // Initialize RecyclerView
+        postsRecyclerView = new RecyclerView(this);
+        postsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        postAdapter = new PostAdapter(this, userPosts);
+        postsRecyclerView.setAdapter(postAdapter);
+
+        // Replace the hardcoded posts with RecyclerView
+        postsContainer.removeAllViews();
+        postsContainer.addView(postsRecyclerView);
+        postsContainer.setOrientation(LinearLayout.VERTICAL);
 
         TextView filterAll = findViewById(R.id.filterAll);
         TextView filterRoad = findViewById(R.id.filterRoad);
@@ -75,6 +104,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         fetchAndLoadProfileImageAndData();
+        fetchUserPosts();
 
         back.setOnClickListener(view -> {
             Intent intentBack = new Intent(ProfileActivity.this, HomeMainActivity.class);
@@ -109,6 +139,9 @@ public class ProfileActivity extends AppCompatActivity {
             TextView clickedFilter = (TextView) v;
             setFilterBackground(clickedFilter, true);
             resetOtherFilters(clickedFilter);
+            // You can implement filtering by category here
+            String category = clickedFilter.getText().toString();
+            filterPostsByCategory(category);
         };
 
         if (filterAll != null) filterAll.setOnClickListener(filterClickListener);
@@ -197,6 +230,89 @@ public class ProfileActivity extends AppCompatActivity {
                 userDescriptionTextView.setText("No bio available.");
             }
         });
+    }
+
+    private void fetchUserPosts() {
+        RetrofitClient.ApiService apiService = RetrofitClient.getApiService(this);
+        Call<PostsResponse> call = apiService.getPosts();
+
+        call.enqueue(new Callback<PostsResponse>() {
+            @Override
+            public void onResponse(Call<PostsResponse> call, Response<PostsResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    PostsResponse postsResponse = response.body();
+                    if ("success".equals(postsResponse.getStatus())) {
+                        // Filter posts by the current user ID
+                        List<Post> allPosts = postsResponse.getPosts();
+                        userPosts.clear();
+
+                        for (Post post : allPosts) {
+                            if (post.getUserId() == userId) {
+                                userPosts.add(post);
+                            }
+                        }
+
+                        postAdapter.notifyDataSetChanged();
+
+                        if (userPosts.isEmpty()) {
+                            Toast.makeText(ProfileActivity.this, "No posts found for this user", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(ProfileActivity.this, "Failed to fetch posts", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Failed to fetch posts", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostsResponse> call, Throwable t) {
+                Log.e(TAG, "Error fetching posts: " + t.getMessage());
+                Toast.makeText(ProfileActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void filterPostsByCategory(String category) {
+        if (category.equalsIgnoreCase("All")) {
+            // Show all posts
+            fetchUserPosts();
+        } else {
+            // Filter posts by category
+            RetrofitClient.ApiService apiService = RetrofitClient.getApiService(this);
+            Call<PostsResponse> call = apiService.getPosts();
+
+            call.enqueue(new Callback<PostsResponse>() {
+                @Override
+                public void onResponse(Call<PostsResponse> call, Response<PostsResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        PostsResponse postsResponse = response.body();
+                        if ("success".equals(postsResponse.getStatus())) {
+                            List<Post> allPosts = postsResponse.getPosts();
+                            userPosts.clear();
+
+                            for (Post post : allPosts) {
+                                if (post.getUserId() == userId &&
+                                        post.getCategory().equalsIgnoreCase(category)) {
+                                    userPosts.add(post);
+                                }
+                            }
+
+                            postAdapter.notifyDataSetChanged();
+
+                            if (userPosts.isEmpty()) {
+                                Toast.makeText(ProfileActivity.this, "No " + category + " posts found", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<PostsResponse> call, Throwable t) {
+                    Log.e(TAG, "Error filtering posts: " + t.getMessage());
+                }
+            });
+        }
     }
 
     private void setFilterBackground(TextView filter, boolean isSelected) {
