@@ -93,7 +93,7 @@
                         android:id="@+id/postAuthor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sanjaya Rajbhandari "
+                        android:text="Sanjaya Rajbhandari"
                         android:textColor="@color/post_text"
                         android:textSize="12sp"
                         android:textStyle="bold"/>

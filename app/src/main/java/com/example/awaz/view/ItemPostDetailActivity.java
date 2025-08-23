@@ -19,6 +19,7 @@ import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.awaz.R;
 import com.example.awaz.adapter.CommentAdapter;
+import com.example.awaz.controller.UserController;
 import com.example.awaz.databinding.ItemPostDetailActivityBinding;
 import com.example.awaz.model.CommentRequest;
 import com.example.awaz.model.CommentResponse;
@@ -26,6 +27,7 @@ import com.example.awaz.model.CommentsResponse;
 import com.example.awaz.model.Post;
 import com.example.awaz.model.ReactionRequest;
 import com.example.awaz.model.ReactionResponse;
+import com.example.awaz.model.UserData;
 import com.example.awaz.service.RetrofitClient;
 
 import java.io.ByteArrayOutputStream;
@@ -46,6 +48,7 @@ public class ItemPostDetailActivity extends AppCompatActivity {
     private ActivityResultLauncher<String> imagePickerLauncher;
     private String selectedImageBase64;
     private Map<String, Boolean> userReactions = new HashMap<>(); // Track user's reactions
+    private int currentUserId = -1; // To store the current user's ID
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,9 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         // Populate post details
         populatePostDetails();
 
+        // Fetch and load current user's profile image
+        fetchAndLoadProfileImage();
+
         // Fetch comments
         fetchComments();
 
@@ -92,8 +98,88 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         // Set up back button
         binding.backArrow.setOnClickListener(v -> finish());
 
+        // Set up profile click listener
+        binding.imgProfile.setOnClickListener(v -> {
+            if (currentUserId != -1) {
+                Intent profileIntent = new Intent(ItemPostDetailActivity.this, ProfileActivity.class);
+                profileIntent.putExtra("user_id", currentUserId);
+                startActivity(profileIntent);
+            } else {
+                Toast.makeText(this, "User ID not loaded yet", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         // Set up reaction buttons
         setupReactionListeners();
+    }
+
+    private void fetchAndLoadProfileImage() {
+        Glide.with(this).clear(binding.imgProfile); // Clear existing image
+        Glide.with(this).clear(binding.inputProfileImage); // Clear existing input profile image
+        UserController userController = new UserController(this, null);
+        userController.getCurrentUser(RetrofitClient.getAccessToken(this), new UserController.UserDataCallback() {
+            @Override
+            public void onSuccess(UserData userData) {
+                if (userData != null) {
+                    currentUserId = userData.getUserId();
+                    Log.d(TAG, "Current userId set to: " + currentUserId);
+
+                    String profileImagePath = userData.getProfileImage();
+                    Log.d(TAG, "Profile image path from API: " + profileImagePath);
+
+                    String imageUrl;
+                    if (profileImagePath != null && !profileImagePath.isEmpty()) {
+                        if (profileImagePath.startsWith("http://") || profileImagePath.startsWith("https://")) {
+                            imageUrl = profileImagePath;
+                            Log.d(TAG, "Using full URL from API: " + imageUrl);
+                        } else {
+                            imageUrl = RetrofitClient.getBaseUrl() + (profileImagePath.startsWith("/storage/") ? "" : "/storage/") + profileImagePath;
+                            Log.d(TAG, "Constructed URL: " + imageUrl);
+                        }
+
+                        String accessToken = RetrofitClient.getAccessToken(ItemPostDetailActivity.this);
+                        GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                                ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                                .addHeader("Authorization", "Bearer " + accessToken)
+                                .build())
+                                : new GlideUrl(imageUrl);
+
+                        RequestOptions requestOptions = new RequestOptions()
+                                .placeholder(R.drawable.profile)
+                                .error(R.drawable.profile)
+                                .circleCrop();
+
+                        // Load into top bar profile image
+                        Glide.with(ItemPostDetailActivity.this)
+                                .load(glideUrl)
+                                .apply(requestOptions)
+                                .into(binding.imgProfile);
+
+                        // Load into comment input profile image
+                        Glide.with(ItemPostDetailActivity.this)
+                                .load(glideUrl)
+                                .apply(requestOptions)
+                                .into(binding.inputProfileImage);
+                    } else {
+                        Log.d(TAG, "No profile image found, using default");
+                        binding.imgProfile.setImageResource(R.drawable.profile);
+                        binding.inputProfileImage.setImageResource(R.drawable.profile);
+                    }
+                } else {
+                    Log.e(TAG, "UserData is null");
+                    binding.imgProfile.setImageResource(R.drawable.profile);
+                    binding.inputProfileImage.setImageResource(R.drawable.profile);
+                }
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.e(TAG, "Failed to fetch user: " + errorMessage);
+                Toast.makeText(ItemPostDetailActivity.this, "Failed to load profile image", Toast.LENGTH_SHORT).show();
+                binding.imgProfile.setImageResource(R.drawable.profile);
+                binding.inputProfileImage.setImageResource(R.drawable.profile);
+            }
+        });
     }
 
     private void populatePostDetails() {
@@ -108,7 +194,7 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         binding.invalidCount.setText(String.valueOf(post.getInvalidCount()));
         binding.fixedCount.setText(String.valueOf(post.getFixedCount()));
 
-        // Load profile image
+        // Load post author's profile image
         String profileImagePath = post.getProfileImage();
         Log.d(TAG, "Raw profileImagePath from API: " + profileImagePath);
         if (profileImagePath != null && !profileImagePath.isEmpty()) {
@@ -174,7 +260,7 @@ public class ItemPostDetailActivity extends AppCompatActivity {
 
     private void fetchComments() {
         RetrofitClient.ApiService apiService = RetrofitClient.getApiService(this);
-        Call<CommentsResponse> call = apiService.getComments(post.getId());
+        Call<CommentsResponse> call = apiService.getComments(post.getIssueId());
 
         call.enqueue(new Callback<CommentsResponse>() {
             @Override
@@ -184,17 +270,19 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                     if ("success".equals(commentsResponse.getStatus())) {
                         commentAdapter.updateComments(commentsResponse.getComments());
                     } else {
+                        Log.e(TAG, "Failed to fetch comments: Status = " + commentsResponse.getStatus());
                         Toast.makeText(ItemPostDetailActivity.this, "Failed to fetch comments", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(ItemPostDetailActivity.this, "Failed to fetch comments", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Failed to fetch comments: " + response.code() + " - " + response.message());
+                    Toast.makeText(ItemPostDetailActivity.this, "Failed to fetch comments: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<CommentsResponse> call, Throwable t) {
-                Log.e(TAG, "Error fetching comments: " + t.getMessage());
-                Toast.makeText(ItemPostDetailActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Error fetching comments: " + t.getMessage(), t);
+                Toast.makeText(ItemPostDetailActivity.this, "Network error fetching comments: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -208,7 +296,7 @@ public class ItemPostDetailActivity extends AppCompatActivity {
 
         CommentRequest commentRequest = new CommentRequest(commentText, selectedImageBase64);
         RetrofitClient.ApiService apiService = RetrofitClient.getApiService(this);
-        Call<CommentResponse> call = apiService.addComment(post.getId(), commentRequest);
+        Call<CommentResponse> call = apiService.addComment(post.getIssueId(), commentRequest);
 
         call.enqueue(new Callback<CommentResponse>() {
             @Override
@@ -223,17 +311,19 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                         commentAdapter.addComment(commentResponse.getComment());
                         Toast.makeText(ItemPostDetailActivity.this, "Comment added", Toast.LENGTH_SHORT).show();
                     } else {
+                        Log.e(TAG, "Failed to add comment: Status = " + commentResponse.getStatus());
                         Toast.makeText(ItemPostDetailActivity.this, "Failed to add comment", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(ItemPostDetailActivity.this, "Failed to add comment", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Failed to add comment: " + response.code() + " - " + response.message());
+                    Toast.makeText(ItemPostDetailActivity.this, "Failed to add comment: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<CommentResponse> call, Throwable t) {
-                Log.e(TAG, "Error adding comment: " + t.getMessage());
-                Toast.makeText(ItemPostDetailActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Error adding comment: " + t.getMessage(), t);
+                Toast.makeText(ItemPostDetailActivity.this, "Network error adding comment: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -252,7 +342,7 @@ public class ItemPostDetailActivity extends AppCompatActivity {
             } else if (v.getId() == R.id.fixedReaction) {
                 reactionType = "fixed";
             }
-            addReaction(post.getId(), reactionType);
+            addReaction(post.getIssueId(), reactionType); // Use issueId
         };
 
         binding.supportReaction.setOnClickListener(reactionListener);
@@ -262,16 +352,15 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         binding.fixedReaction.setOnClickListener(reactionListener);
     }
 
-    private void addReaction(int postId, String reactionType) {
+    private void addReaction(int issueId, String reactionType) {
         if (userReactions.size() >= 2 && !userReactions.containsKey(reactionType)) {
             Toast.makeText(this, "You can only add up to 2 reactions per post", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Log.d(TAG, "Sending reaction for issue_id: " + post.getIssueId()); // Add logging
         RetrofitClient.ApiService apiService = RetrofitClient.getApiService(this);
         ReactionRequest reactionRequest = new ReactionRequest(reactionType);
-        Call<ReactionResponse> call = apiService.addReaction(post.getIssueId(), reactionRequest);
+        Call<ReactionResponse> call = apiService.addReaction(issueId, reactionRequest);
 
         call.enqueue(new Callback<ReactionResponse>() {
             @Override
@@ -302,8 +391,8 @@ public class ItemPostDetailActivity extends AppCompatActivity {
 
                         Toast.makeText(ItemPostDetailActivity.this, "Reaction " + (userReactions.containsKey(reactionType) ? "added" : "removed"), Toast.LENGTH_SHORT).show();
                     } else {
-                        Log.e(TAG, "Failed reaction response: " + reactionResponse.getMessage());
-                        Toast.makeText(ItemPostDetailActivity.this, "Failed to add reaction: " + reactionResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Failed reaction response: Status = " + reactionResponse.getStatus());
+                        Toast.makeText(ItemPostDetailActivity.this, "Failed to add reaction", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.e(TAG, "Unsuccessful response: " + response.code() + " - " + response.message());
