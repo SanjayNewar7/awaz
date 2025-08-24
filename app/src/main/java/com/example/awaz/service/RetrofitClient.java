@@ -10,6 +10,7 @@ import com.example.awaz.model.CommentsResponse;
 import com.example.awaz.model.IssueRequest;
 import com.example.awaz.model.IssueResponse;
 import com.example.awaz.model.IssuesResponse;
+import com.example.awaz.model.LikeResponse;
 import com.example.awaz.model.LoginRequest;
 import com.example.awaz.model.LoginResponse;
 import com.example.awaz.model.PostsResponse;
@@ -19,6 +20,8 @@ import com.example.awaz.model.SignupRequest;
 import com.example.awaz.model.SignupResponse;
 import com.example.awaz.model.UserResponse;
 import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -91,7 +94,7 @@ public class RetrofitClient {
     }
 
     public interface ApiService {
-        @GET("users/{userId}")
+        @GET("api/users/{userId}")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         Call<UserResponse> getUser(@Path("userId") int userId); // Updated to UserResponse
 
@@ -134,5 +137,8 @@ public class RetrofitClient {
         @GET("api/posts")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         Call<PostsResponse> getPosts();
+
+        @POST("api/users/{userId}/like")
+        Call<LikeResponse> toggleLike(@Path("userId") int userId);
     }
 }

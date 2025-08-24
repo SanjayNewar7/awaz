@@ -13,7 +13,6 @@
         android:padding="12dp"
         android:background="@color/white">
 
-        <!-- Back Arrow -->
         <ImageView
             android:id="@+id/backArrow"
             android:layout_width="24dp"
@@ -23,7 +22,6 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true" />
 
-        <!-- Title -->
         <TextView
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
@@ -34,7 +32,6 @@
             android:textStyle="bold"
             android:layout_centerInParent="true" />
 
-        <!-- Profile Icon -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgProfile"
             android:layout_width="36dp"
@@ -47,13 +44,12 @@
             app:shapeAppearanceOverlay="@style/CircleImage" />
     </RelativeLayout>
 
-    <!-- Scrollable Post Detail -->
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/postDetailScroll"
-        android:layout_below="@id/topBar"
-        android:layout_above="@id/commentInputSection"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_below="@id/topBar"
+        android:layout_above="@id/commentInputSection"
         android:fillViewport="true">
 
         <LinearLayout
@@ -63,7 +59,6 @@
             android:orientation="vertical"
             android:padding="12dp">
 
-            <!-- Post Header -->
             <LinearLayout
                 android:id="@+id/postHeader"
                 android:layout_width="match_parent"
@@ -71,7 +66,6 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <!-- Circular Profile Image -->
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/postAuthorProfile"
                     android:layout_width="30dp"
@@ -105,7 +99,7 @@
                         android:text=" raised an issue on "
                         android:textColor="@color/post_text"
                         android:textSize="12sp"
-                        android:layout_marginStart="4dp" /> <!-- Added margin for space -->
+                        android:layout_marginStart="4dp" />
 
                     <TextView
                         android:id="@+id/issueType"
@@ -117,7 +111,6 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- Three Dot Icon -->
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/threeDotIcon"
                     android:layout_width="24dp"
@@ -137,7 +130,6 @@
                 android:layout_marginStart="38dp"
                 android:layout_marginTop="-10dp" />
 
-            <!-- Post Title -->
             <TextView
                 android:id="@+id/postTitle"
                 android:layout_width="match_parent"
@@ -148,7 +140,6 @@
                 android:textSize="12sp"
                 android:layout_marginTop="6dp" />
 
-            <!-- Post Description -->
             <TextView
                 android:id="@+id/postDescription"
                 android:layout_width="match_parent"
@@ -157,21 +148,23 @@
                 android:textColor="@color/post_text"
                 android:textSize="12sp" />
 
-            <!-- Post Images -->
             <LinearLayout
                 android:id="@+id/postImagesContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/postImage1"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:scaleType="centerCrop"
+                    android:maxHeight="400dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/sample1"
                     android:clickable="true"
                     android:focusable="true" />
@@ -179,17 +172,19 @@
                 <ImageView
                     android:id="@+id/postImage2"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
-                    android:scaleType="centerCrop"
+                    android:maxHeight="400dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/sample2"
                     android:clickable="true"
                     android:focusable="true" />
             </LinearLayout>
 
-            <!-- Reaction Section -->
+
             <LinearLayout
                 android:id="@+id/reactionSection"
                 android:layout_width="match_parent"
@@ -202,7 +197,6 @@
                 android:background="@color/gray_light_light"
                 android:weightSum="5">
 
-                <!-- Support -->
                 <LinearLayout
                     android:id="@+id/supportReaction"
                     android:layout_weight="1"
@@ -244,7 +238,6 @@
                         android:gravity="center" />
                 </LinearLayout>
 
-                <!-- Affected -->
                 <LinearLayout
                     android:id="@+id/affectedReaction"
                     android:layout_weight="1"
@@ -286,7 +279,6 @@
                         android:gravity="center" />
                 </LinearLayout>
 
-                <!-- Not Sure -->
                 <LinearLayout
                     android:id="@+id/notSureReaction"
                     android:layout_weight="1"
@@ -328,7 +320,6 @@
                         android:gravity="center" />
                 </LinearLayout>
 
-                <!-- Invalid -->
                 <LinearLayout
                     android:id="@+id/invalidReaction"
                     android:layout_weight="1"
@@ -370,7 +361,6 @@
                         android:gravity="center" />
                 </LinearLayout>
 
-                <!-- Fixed -->
                 <LinearLayout
                     android:id="@+id/fixedReaction"
                     android:layout_weight="1"
@@ -413,7 +403,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Comments Section -->
             <LinearLayout
                 android:id="@+id/commentsContainer"
                 android:layout_width="match_parent"
@@ -434,12 +423,11 @@
                     android:id="@+id/recyclerComments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
+                    android:nestedScrollingEnabled="true" />
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- New Comment Input Section -->
     <LinearLayout
         android:id="@+id/commentInputSection"
         android:layout_width="match_parent"
@@ -449,7 +437,6 @@
         android:padding="12dp"
         android:background="@color/gray_light_light">
 
-        <!-- Image Preview for Comment -->
         <ImageView
             android:id="@+id/commentImagePreview"
             android:layout_width="100dp"
@@ -459,14 +446,12 @@
             android:visibility="gone"
             android:contentDescription="Comment Image Preview" />
 
-        <!-- Input Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <!-- Profile Image -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/inputProfileImage"
                 android:layout_width="30dp"
@@ -477,7 +462,6 @@
                 android:contentDescription="Profile"
                 app:shapeAppearanceOverlay="@style/CircleImage" />
 
-            <!-- Input Text Field -->
             <EditText
                 android:id="@+id/commentInput"
                 android:layout_width="0dp"
@@ -491,7 +475,6 @@
                 android:paddingEnd="12dp"
                 android:maxLines="1" />
 
-            <!-- Gallery Button -->
             <ImageView
                 android:id="@+id/galleryButton"
                 android:layout_width="30dp"
@@ -501,7 +484,6 @@
                 android:contentDescription="Add Image"
                 android:scaleType="centerCrop" />
 
-            <!-- Send Button -->
             <ImageView
                 android:id="@+id/sendButton"
                 android:layout_width="30dp"

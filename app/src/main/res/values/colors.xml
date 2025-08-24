@@ -13,6 +13,8 @@
     <color name="green_text">#3FBA44</color>
     <color name="yellow">#FF9800</color>
     <color name="green">#008000</color>
+    <color name="progress_bar_tint">#6200EE</color>
+    <color name="blue_500">#2196F3</color>
 
 
 

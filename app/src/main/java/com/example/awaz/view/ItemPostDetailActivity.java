@@ -1,11 +1,16 @@
 package com.example.awaz.view;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -29,6 +34,7 @@ import com.example.awaz.model.ReactionRequest;
 import com.example.awaz.model.ReactionResponse;
 import com.example.awaz.model.UserData;
 import com.example.awaz.service.RetrofitClient;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -47,8 +53,8 @@ public class ItemPostDetailActivity extends AppCompatActivity {
     private CommentAdapter commentAdapter;
     private ActivityResultLauncher<String> imagePickerLauncher;
     private String selectedImageBase64;
-    private Map<String, Boolean> userReactions = new HashMap<>(); // Track user's reactions
-    private int currentUserId = -1; // To store the current user's ID
+    private Map<String, Boolean> userReactions = new HashMap<>();
+    private int currentUserId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +62,6 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         binding = ItemPostDetailActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Get post from intent
         Intent intent = getIntent();
         post = (Post) intent.getSerializableExtra("post");
         if (post == null) {
@@ -65,12 +70,10 @@ public class ItemPostDetailActivity extends AppCompatActivity {
             return;
         }
 
-        // Initialize RecyclerView for comments
         commentAdapter = new CommentAdapter(this, new java.util.ArrayList<>());
         binding.recyclerComments.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerComments.setAdapter(commentAdapter);
 
-        // Initialize image picker
         imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 uri -> {
                     if (uri != null) {
@@ -80,25 +83,15 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                     }
                 });
 
-        // Populate post details
         populatePostDetails();
-
-        // Fetch and load current user's profile image
         fetchAndLoadProfileImage();
-
-        // Fetch comments
         fetchComments();
 
-        // Set up comment submission
         binding.sendButton.setOnClickListener(v -> submitComment());
-
-        // Set up image picker button
         binding.galleryButton.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
-
-        // Set up back button
         binding.backArrow.setOnClickListener(v -> finish());
+        binding.threeDotIcon.setOnClickListener(v -> showBottomSheetMenu());
 
-        // Set up profile click listener
         binding.imgProfile.setOnClickListener(v -> {
             if (currentUserId != -1) {
                 Intent profileIntent = new Intent(ItemPostDetailActivity.this, ProfileActivity.class);
@@ -109,13 +102,47 @@ public class ItemPostDetailActivity extends AppCompatActivity {
             }
         });
 
-        // Set up reaction buttons
         setupReactionListeners();
     }
 
+    private void showBottomSheetMenu() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View bottomSheetView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_menu, null);
+        bottomSheetDialog.setContentView(bottomSheetView);
+
+        TextView shareOption = bottomSheetView.findViewById(R.id.share_option);
+        TextView reportOption = bottomSheetView.findViewById(R.id.report_option);
+        TextView copyLinkOption = bottomSheetView.findViewById(R.id.copy_link_option);
+
+        shareOption.setOnClickListener(v -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Share Post");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, post.getTitle() + "\n" + post.getDescription() + "\n\nView more: " + RetrofitClient.getBaseUrl() + "/post/" + post.getIssueId());
+            startActivity(Intent.createChooser(shareIntent, "Share Post"));
+            bottomSheetDialog.dismiss();
+        });
+
+        reportOption.setOnClickListener(v -> {
+            Toast.makeText(this, "Report submitted for post ID: " + post.getIssueId(), Toast.LENGTH_SHORT).show();
+            // TODO: Implement report functionality (e.g., API call to report post)
+            bottomSheetDialog.dismiss();
+        });
+
+        copyLinkOption.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Post Link", RetrofitClient.getBaseUrl() + "/post/" + post.getIssueId());
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(this, "Link copied to clipboard", Toast.LENGTH_SHORT).show();
+            bottomSheetDialog.dismiss();
+        });
+
+        bottomSheetDialog.show();
+    }
+
     private void fetchAndLoadProfileImage() {
-        Glide.with(this).clear(binding.imgProfile); // Clear existing image
-        Glide.with(this).clear(binding.inputProfileImage); // Clear existing input profile image
+        Glide.with(this).clear(binding.imgProfile);
+        Glide.with(this).clear(binding.inputProfileImage);
         UserController userController = new UserController(this, null);
         userController.getCurrentUser(RetrofitClient.getAccessToken(this), new UserController.UserDataCallback() {
             @Override
@@ -149,13 +176,11 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                                 .error(R.drawable.profile)
                                 .circleCrop();
 
-                        // Load into top bar profile image
                         Glide.with(ItemPostDetailActivity.this)
                                 .load(glideUrl)
                                 .apply(requestOptions)
                                 .into(binding.imgProfile);
 
-                        // Load into comment input profile image
                         Glide.with(ItemPostDetailActivity.this)
                                 .load(glideUrl)
                                 .apply(requestOptions)
@@ -225,37 +250,78 @@ public class ItemPostDetailActivity extends AppCompatActivity {
             Glide.with(this).load(R.drawable.profile).into(binding.postAuthorProfile);
         }
 
-        // Set click listener for username
+        // Set click listeners for username and profile image
         binding.postAuthor.setOnClickListener(v -> {
             Intent intent = new Intent(ItemPostDetailActivity.this, ProfileActivity.class);
             intent.putExtra("user_id", post.getUserId());
             startActivity(intent);
         });
-
-        // Set click listener for profile image
         binding.postAuthorProfile.setOnClickListener(v -> {
             Intent intent = new Intent(ItemPostDetailActivity.this, ProfileActivity.class);
             intent.putExtra("user_id", post.getUserId());
             startActivity(intent);
         });
 
-        // Load post images if available
-        String baseUrl = RetrofitClient.getBaseUrl() + "storage/";
+        // Load post images and control visibility
+        String baseUrl = RetrofitClient.getBaseUrl();
+        boolean hasImages = false;
+
         if (post.getImage1() != null && !post.getImage1().isEmpty()) {
-            Glide.with(this).load(baseUrl + post.getImage1())
+            String imageUrl;
+            if (post.getImage1().startsWith("http://") || post.getImage1().startsWith("https://")) {
+                imageUrl = post.getImage1();
+                Log.d(TAG, "Using full URL for image1: " + imageUrl);
+            } else {
+                imageUrl = baseUrl + (post.getImage1().startsWith("/storage/") ? "" : "/storage/") + post.getImage1();
+                Log.d(TAG, "Constructed URL for image1: " + imageUrl);
+            }
+
+            String accessToken = RetrofitClient.getAccessToken(this);
+            GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                    ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .build())
+                    : new GlideUrl(imageUrl);
+
+            Glide.with(this)
+                    .load(glideUrl)
                     .placeholder(R.drawable.sample1)
                     .error(R.drawable.sample1)
                     .into(binding.postImage1);
+            hasImages = true;
+        } else {
+            binding.postImage1.setVisibility(View.GONE);
         }
+
         if (post.getImage2() != null && !post.getImage2().isEmpty()) {
-            binding.postImage2.setVisibility(View.VISIBLE);
-            Glide.with(this).load(baseUrl + post.getImage2())
+            String imageUrl;
+            if (post.getImage2().startsWith("http://") || post.getImage2().startsWith("https://")) {
+                imageUrl = post.getImage2();
+                Log.d(TAG, "Using full URL for image2: " + imageUrl);
+            } else {
+                imageUrl = baseUrl + (post.getImage2().startsWith("/storage/") ? "" : "/storage/") + post.getImage2();
+                Log.d(TAG, "Constructed URL for image2: " + imageUrl);
+            }
+
+            String accessToken = RetrofitClient.getAccessToken(this);
+            GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                    ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .build())
+                    : new GlideUrl(imageUrl);
+
+            Glide.with(this)
+                    .load(glideUrl)
                     .placeholder(R.drawable.sample2)
                     .error(R.drawable.sample2)
                     .into(binding.postImage2);
+            binding.postImage2.setVisibility(View.VISIBLE);
+            hasImages = true;
         } else {
             binding.postImage2.setVisibility(View.GONE);
         }
+
+        binding.postImagesContainer.setVisibility(hasImages ? View.VISIBLE : View.GONE);
     }
 
     private void fetchComments() {
@@ -307,7 +373,6 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                         binding.commentInput.setText("");
                         binding.commentImagePreview.setVisibility(View.GONE);
                         selectedImageBase64 = null;
-
                         commentAdapter.addComment(commentResponse.getComment());
                         Toast.makeText(ItemPostDetailActivity.this, "Comment added", Toast.LENGTH_SHORT).show();
                     } else {
@@ -342,7 +407,7 @@ public class ItemPostDetailActivity extends AppCompatActivity {
             } else if (v.getId() == R.id.fixedReaction) {
                 reactionType = "fixed";
             }
-            addReaction(post.getIssueId(), reactionType); // Use issueId
+            addReaction(post.getIssueId(), reactionType);
         };
 
         binding.supportReaction.setOnClickListener(reactionListener);
@@ -369,7 +434,6 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                     ReactionResponse reactionResponse = response.body();
                     Log.d(TAG, "API Response: " + response.body().toString());
                     if ("success".equals(reactionResponse.getStatus())) {
-                        // Update reaction counts
                         ReactionResponse.ReactionCount supportCount = reactionResponse.getReactionCounts().get("support");
                         ReactionResponse.ReactionCount affectedCount = reactionResponse.getReactionCounts().get("affected");
                         ReactionResponse.ReactionCount notSureCount = reactionResponse.getReactionCounts().get("not_sure");
@@ -382,11 +446,10 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                         if (invalidCount != null) binding.invalidCount.setText(String.valueOf(invalidCount.getCount()));
                         if (fixedCount != null) binding.fixedCount.setText(String.valueOf(fixedCount.getCount()));
 
-                        // Update local reaction state
                         if (userReactions.containsKey(reactionType)) {
-                            userReactions.remove(reactionType); // Undo reaction
+                            userReactions.remove(reactionType);
                         } else {
-                            userReactions.put(reactionType, true); // Add new reaction
+                            userReactions.put(reactionType, true);
                         }
 
                         Toast.makeText(ItemPostDetailActivity.this, "Reaction " + (userReactions.containsKey(reactionType) ? "added" : "removed"), Toast.LENGTH_SHORT).show();

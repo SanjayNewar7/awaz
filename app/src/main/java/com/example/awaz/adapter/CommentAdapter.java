@@ -1,20 +1,25 @@
 package com.example.awaz.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.example.awaz.R;
 import com.example.awaz.model.CommentResponse;
 import com.example.awaz.service.RetrofitClient;
+import com.example.awaz.view.ProfileActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
+    private static final String TAG = "CommentAdapter";
     private final Context context;
     private final List<CommentResponse.Comment> comments;
 
@@ -63,7 +69,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         // Load comment image if available
         if (comment.getImagePath() != null && !comment.getImagePath().isEmpty()) {
-            Glide.with(context).load(baseUrl + comment.getImagePath())
+            String imageUrl = baseUrl + comment.getImagePath();
+            String accessToken = RetrofitClient.getAccessToken(context);
+            GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                    ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .build())
+                    : new GlideUrl(imageUrl);
+
+            Glide.with(context)
+                    .load(glideUrl)
+                    .thumbnail(0.25f) // Scale down to 1/4 size
                     .placeholder(R.drawable.profile)
                     .error(R.drawable.profile)
                     .into(holder.commentImage);
@@ -71,6 +87,29 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         } else {
             holder.commentImage.setVisibility(View.GONE);
         }
+
+        // Add click listeners for profile image and username
+        holder.profileImage.setOnClickListener(v -> {
+            if (comment.getUserId() == -1) {
+                Log.e(TAG, "Invalid userId for comment at position " + position);
+                Toast.makeText(context, "User ID not available", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(context, ProfileActivity.class);
+            intent.putExtra("user_id", comment.getUserId());
+            context.startActivity(intent);
+        });
+
+        holder.commentAuthor.setOnClickListener(v -> {
+            if (comment.getUserId() == -1) {
+                Log.e(TAG, "Invalid userId for comment at position " + position);
+                Toast.makeText(context, "User ID not available", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(context, ProfileActivity.class);
+            intent.putExtra("user_id", comment.getUserId());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -117,7 +156,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 return diffInDays + " days ago";
             }
         } catch (ParseException e) {
-            Log.e("CommentAdapter", "Error parsing date: " + e.getMessage());
+            Log.e(TAG, "Error parsing date: " + e.getMessage());
             return "unknown";
         }
     }

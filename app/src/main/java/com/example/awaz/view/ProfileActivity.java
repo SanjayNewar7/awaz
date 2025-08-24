@@ -26,6 +26,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.awaz.R;
 import com.example.awaz.adapter.PostAdapter;
 import com.example.awaz.controller.UserController;
+import com.example.awaz.model.LikeResponse;
 import com.example.awaz.model.Post;
 import com.example.awaz.model.PostsResponse;
 import com.example.awaz.model.UserData;
@@ -121,16 +122,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        likeButton.setOnClickListener(v -> {
-            isLiked = !isLiked;
-            if (isLiked) {
-                likeButton.setImageResource(R.drawable.heart);
-                showPopup("You gave a heart");
-            } else {
-                likeButton.setImageResource(R.drawable.disheart);
-                showPopup("You removed heart");
-            }
-        });
+        likeButton.setOnClickListener(v -> toggleLike());
 
         setFilterBackground(filterAll, true);
         resetOtherFilters(filterAll);
@@ -139,7 +131,6 @@ public class ProfileActivity extends AppCompatActivity {
             TextView clickedFilter = (TextView) v;
             setFilterBackground(clickedFilter, true);
             resetOtherFilters(clickedFilter);
-            // You can implement filtering by category here
             String category = clickedFilter.getText().toString();
             filterPostsByCategory(category);
         };
@@ -152,6 +143,72 @@ public class ProfileActivity extends AppCompatActivity {
         if (filterLights != null) filterLights.setOnClickListener(filterClickListener);
         if (filterEvents != null) filterEvents.setOnClickListener(filterClickListener);
         if (filterMore != null) filterMore.setOnClickListener(filterClickListener);
+    }
+
+    private void toggleLike() {
+        String accessToken = RetrofitClient.getAccessToken(this);
+        if (accessToken == null) {
+            Toast.makeText(this, "Please log in to like this profile", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        RetrofitClient.ApiService apiService = RetrofitClient.getApiService(this);
+        Call<LikeResponse> call = apiService.toggleLike(userId);
+
+        call.enqueue(new Callback<LikeResponse>() {
+            @Override
+            public void onResponse(Call<LikeResponse> call, Response<LikeResponse> response) {
+                // Log raw response for debugging
+                Log.d(TAG, "Toggle like raw response: HTTP " + response.code() + ", Body: " + (response.body() != null ? response.body().toString() : "null"));
+                try {
+                    if (response.isSuccessful() && response.body() != null) {
+                        LikeResponse likeResponse = response.body();
+                        Log.d(TAG, "Toggle like parsed response: " + likeResponse.toString());
+                        if ("success".equals(likeResponse.getStatus())) {
+                            isLiked = likeResponse.isLiked();
+                            int likesCount = likeResponse.getLikesCount();
+                            String message = likeResponse.getMessage();
+
+                            // Update UI
+                            likeButton.setImageResource(isLiked ? R.drawable.heart : R.drawable.disheart);
+                            likesCountTextView.setText("   " + likesCount + (likesCount == 1 ? " Like" : " Likes"));
+                            showPopup(message);
+                        } else {
+                            String message = likeResponse.getMessage() != null ? likeResponse.getMessage() : "Failed to toggle like";
+                            Log.e(TAG, "API Error: " + message);
+                            Toast.makeText(ProfileActivity.this, message, Toast.LENGTH_SHORT).show();
+                            // Fallback: Refresh profile data
+                            fetchAndLoadProfileImageAndData();
+                        }
+                    } else {
+                        String errorBody = "Unknown error";
+                        if (response.errorBody() != null) {
+                            errorBody = response.errorBody().string();
+                        }
+                        Log.e(TAG, "Failed to toggle like: HTTP " + response.code() + ", Body: " + errorBody);
+                        String message = response.code() == 403 ? "Cannot like your own profile" :
+                                response.code() == 401 ? "Please log in to like this profile" :
+                                        "Failed to toggle like: " + errorBody;
+                        Toast.makeText(ProfileActivity.this, message, Toast.LENGTH_SHORT).show();
+                        // Fallback: Refresh profile data
+                        fetchAndLoadProfileImageAndData();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error processing toggle like response: " + e.getMessage(), e);
+                    Toast.makeText(ProfileActivity.this, "Error processing like response", Toast.LENGTH_SHORT).show();
+                    // Fallback: Refresh profile data
+                    fetchAndLoadProfileImageAndData();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LikeResponse> call, Throwable t) {
+                Log.e(TAG, "Network error in toggleLike: " + t.getMessage(), t);
+                Toast.makeText(ProfileActivity.this, "Network error: Unable to toggle like", Toast.LENGTH_SHORT).show();
+                // Fallback: Refresh profile data
+                fetchAndLoadProfileImageAndData();
+            }
+        });
     }
 
     private void fetchAndLoadProfileImageAndData() {
@@ -211,8 +268,10 @@ public class ProfileActivity extends AppCompatActivity {
                         : !district.isEmpty() ? district
                         : "Unknown Location");
 
-                postsCountTextView.setText(userData.getPostsCount() + " Posts");
-                likesCountTextView.setText("   " + userData.getLikesCount() + " Likes");
+                postsCountTextView.setText(userData.getPostsCount() + (userData.getPostsCount() == 1 ? " Post" : " Posts"));
+                likesCountTextView.setText("   " + userData.getLikesCount() + (userData.getLikesCount() == 1 ? " Like" : " Likes"));
+                isLiked = userData.isLiked(); // Set initial like status
+                likeButton.setImageResource(isLiked ? R.drawable.heart : R.drawable.disheart);
 
                 userDescriptionTextView.setText(userData.getBio() != null ? userData.getBio() : "No bio available.");
             }
@@ -261,13 +320,22 @@ public class ProfileActivity extends AppCompatActivity {
                         Toast.makeText(ProfileActivity.this, "Failed to fetch posts", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    String errorBody = "Unknown error";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorBody = response.errorBody().string();
+                        }
+                        Log.e(TAG, "Failed to fetch posts: HTTP " + response.code() + ", Body: " + errorBody);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error reading posts error body: " + e.getMessage());
+                    }
                     Toast.makeText(ProfileActivity.this, "Failed to fetch posts", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<PostsResponse> call, Throwable t) {
-                Log.e(TAG, "Error fetching posts: " + t.getMessage());
+                Log.e(TAG, "Network error fetching posts: " + t.getMessage());
                 Toast.makeText(ProfileActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -303,13 +371,27 @@ public class ProfileActivity extends AppCompatActivity {
                             if (userPosts.isEmpty()) {
                                 Toast.makeText(ProfileActivity.this, "No " + category + " posts found", Toast.LENGTH_SHORT).show();
                             }
+                        } else {
+                            Toast.makeText(ProfileActivity.this, "Failed to fetch posts", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        String errorBody = "Unknown error";
+                        try {
+                            if (response.errorBody() != null) {
+                                errorBody = response.errorBody().string();
+                            }
+                            Log.e(TAG, "Failed to filter posts: HTTP " + response.code() + ", Body: " + errorBody);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error reading filter posts error body: " + e.getMessage());
+                        }
+                        Toast.makeText(ProfileActivity.this, "Failed to fetch posts", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<PostsResponse> call, Throwable t) {
-                    Log.e(TAG, "Error filtering posts: " + t.getMessage());
+                    Log.e(TAG, "Network error filtering posts: " + t.getMessage());
+                    Toast.makeText(ProfileActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -366,7 +448,7 @@ public class ProfileActivity extends AppCompatActivity {
         popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
 
         handler.postDelayed(() -> {
-            if (popupWindow.isShowing()) {
+            if (popupWindow != null && popupWindow.isShowing()) {
                 popupWindow.dismiss();
             }
         }, 1500);

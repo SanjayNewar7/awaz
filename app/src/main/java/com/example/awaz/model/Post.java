@@ -57,11 +57,20 @@ public class Post implements java.io.Serializable {
     @SerializedName("updated_at")
     private String updatedAt;
 
+    @SerializedName("district")
+    private String district;
+
+    @SerializedName("region_type")
+    private String regionType;
+
+    @SerializedName("ward")
+    private int ward;
+
     // Getters and setters
     public int getId() { return postId; }
+    public void setId(int postId) { this.postId = postId; }
     public int getIssueId() { return issueId; }
     public void setIssueId(int issueId) { this.issueId = issueId; }
-    public void setId(int postId) { this.postId = postId; }
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
     public String getUsername() { return username; }
@@ -94,6 +103,10 @@ public class Post implements java.io.Serializable {
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
     public String getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
-
-
+    public String getDistrict() { return district; }
+    public void setDistrict(String district) { this.district = district; }
+    public String getRegionType() { return regionType; }
+    public void setRegionType(String regionType) { this.regionType = regionType; }
+    public int getWard() { return ward; }
+    public void setWard(int ward) { this.ward = ward; }
 }

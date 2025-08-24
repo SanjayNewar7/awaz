@@ -107,7 +107,6 @@
                             android:id="@+id/likesCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="   56 Likes"
                             android:textColor="@color/white"
                             android:textSize="12sp" />
                     </LinearLayout>

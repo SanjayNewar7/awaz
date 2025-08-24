@@ -1,5 +1,7 @@
 package com.example.awaz.adapter;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -23,6 +25,7 @@ import com.example.awaz.model.ReactionRequest;
 import com.example.awaz.model.ReactionResponse;
 import com.example.awaz.service.RetrofitClient;
 import com.example.awaz.view.ItemPostDetailActivity;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +40,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     private static final String TAG = "PostAdapter";
     private final Context context;
     private final List<Post> postList;
-    private final Map<Integer, Map<String, Boolean>> userReactionsMap = new HashMap<>(); // Track user's reactions per post
+    private final Map<Integer, Map<String, Boolean>> userReactionsMap = new HashMap<>();
 
     public PostAdapter(Context context, List<Post> postList) {
         this.context = context;
@@ -60,13 +63,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             return;
         }
 
-        // Initialize user reactions map for this post if not exists
-        // Use issueId instead of id for consistency with ItemPostDetailActivity
         if (!userReactionsMap.containsKey(post.getIssueId())) {
             userReactionsMap.put(post.getIssueId(), new HashMap<>());
         }
 
-        // Get the userReactions for this specific post and make it final for inner class access
         final Map<String, Boolean> userReactions = userReactionsMap.get(post.getIssueId());
 
         holder.postAuthor.setText(post.getUsername());
@@ -86,8 +86,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.postTitle.setOnClickListener(v -> openPostDetail(post));
         holder.postDescription.setOnClickListener(v -> openPostDetail(post));
         holder.commentCount.setOnClickListener(v -> openPostDetail(post));
+        if (holder.postSeeMore != null) {
+            holder.postSeeMore.setOnClickListener(v -> openPostDetail(post));
+        }
 
-        // Set up reaction listeners with the final userReactions variable
+        // Set click listener for threeDotIcon
+        holder.threeDotIcon.setOnClickListener(v -> showBottomSheetMenu(post));
+
         setupReactionListeners(holder, post, userReactions);
 
         // Load profile image
@@ -96,7 +101,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         if (profileImagePath != null && !profileImagePath.isEmpty()) {
             String imageUrl;
             if (profileImagePath.startsWith("http://") || profileImagePath.startsWith("https://")) {
-                imageUrl = profileImagePath; // Use full URL as-is
+                imageUrl = profileImagePath;
                 Log.d(TAG, "Using full URL for profile: " + imageUrl);
             } else {
                 imageUrl = RetrofitClient.getBaseUrl() + (profileImagePath.startsWith("/storage/") ? "" : "/storage/") + profileImagePath;
@@ -118,9 +123,110 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                             .circleCrop())
                     .into(holder.postAuthorProfile);
         } else {
-            Glide.with(context).load(R.drawable.profile)
-                    .into(holder.postAuthorProfile);
+            Glide.with(context).load(R.drawable.profile).into(holder.postAuthorProfile);
         }
+
+        // Load post images and control visibility
+        String baseUrl = RetrofitClient.getBaseUrl();
+        boolean hasImages = false;
+
+        // Check if image views and container are properly initialized
+        if (holder.postImage1 == null || holder.postImage2 == null || holder.postImagesContainer == null) {
+            Log.e(TAG, "One or more image views are null: postImage1=" + holder.postImage1 + ", postImage2=" + holder.postImage2 + ", postImagesContainer=" + holder.postImagesContainer);
+            return;
+        }
+
+        if (post.getImage1() != null && !post.getImage1().isEmpty()) {
+            String imageUrl;
+            if (post.getImage1().startsWith("http://") || post.getImage1().startsWith("https://")) {
+                imageUrl = post.getImage1();
+                Log.d(TAG, "Using full URL for image1: " + imageUrl);
+            } else {
+                imageUrl = baseUrl + (post.getImage1().startsWith("/storage/") ? "" : "/storage/") + post.getImage1();
+                Log.d(TAG, "Constructed URL for image1: " + imageUrl);
+            }
+
+            String accessToken = RetrofitClient.getAccessToken(context);
+            GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                    ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .build())
+                    : new GlideUrl(imageUrl);
+
+            Glide.with(context)
+                    .load(glideUrl)
+                    .placeholder(R.drawable.sample1)
+                    .error(R.drawable.sample1)
+                    .into(holder.postImage1);
+            hasImages = true;
+        } else {
+            holder.postImage1.setVisibility(View.GONE);
+        }
+
+        if (post.getImage2() != null && !post.getImage2().isEmpty()) {
+            String imageUrl;
+            if (post.getImage2().startsWith("http://") || post.getImage2().startsWith("https://")) {
+                imageUrl = post.getImage2();
+                Log.d(TAG, "Using full URL for image2: " + imageUrl);
+            } else {
+                imageUrl = baseUrl + (post.getImage2().startsWith("/storage/") ? "" : "/storage/") + post.getImage2();
+                Log.d(TAG, "Constructed URL for image2: " + imageUrl);
+            }
+
+            String accessToken = RetrofitClient.getAccessToken(context);
+            GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                    ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .build())
+                    : new GlideUrl(imageUrl);
+
+            Glide.with(context)
+                    .load(glideUrl)
+                    .placeholder(R.drawable.sample2)
+                    .error(R.drawable.sample2)
+                    .into(holder.postImage2);
+            holder.postImage2.setVisibility(View.VISIBLE);
+            hasImages = true;
+        } else {
+            holder.postImage2.setVisibility(View.GONE);
+        }
+
+        holder.postImagesContainer.setVisibility(hasImages ? View.VISIBLE : View.GONE);
+    }
+
+    private void showBottomSheetMenu(Post post) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+        View bottomSheetView = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_menu, null);
+        bottomSheetDialog.setContentView(bottomSheetView);
+
+        TextView shareOption = bottomSheetView.findViewById(R.id.share_option);
+        TextView reportOption = bottomSheetView.findViewById(R.id.report_option);
+        TextView copyLinkOption = bottomSheetView.findViewById(R.id.copy_link_option);
+
+        shareOption.setOnClickListener(v -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Share Post");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, post.getTitle() + "\n" + post.getDescription() + "\n\nView more: " + RetrofitClient.getBaseUrl() + "/post/" + post.getIssueId());
+            context.startActivity(Intent.createChooser(shareIntent, "Share Post"));
+            bottomSheetDialog.dismiss();
+        });
+
+        reportOption.setOnClickListener(v -> {
+            Toast.makeText(context, "Report submitted for post ID: " + post.getIssueId(), Toast.LENGTH_SHORT).show();
+            // TODO: Implement report functionality (e.g., API call to report post)
+            bottomSheetDialog.dismiss();
+        });
+
+        copyLinkOption.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Post Link", RetrofitClient.getBaseUrl() + "/post/" + post.getIssueId());
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(context, "Link copied to clipboard", Toast.LENGTH_SHORT).show();
+            bottomSheetDialog.dismiss();
+        });
+
+        bottomSheetDialog.show();
     }
 
     private void setupReactionListeners(PostViewHolder holder, Post post, final Map<String, Boolean> userReactions) {
@@ -171,7 +277,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     Log.d(TAG, "API Response: " + reactionResponse.toString());
 
                     if ("success".equals(reactionResponse.getStatus())) {
-                        // Update reaction counts
                         ReactionResponse.ReactionCount supportCountData = reactionResponse.getReactionCounts().get("support");
                         ReactionResponse.ReactionCount affectedCountData = reactionResponse.getReactionCounts().get("affected");
                         ReactionResponse.ReactionCount notSureCountData = reactionResponse.getReactionCounts().get("not_sure");
@@ -184,11 +289,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                         if (invalidCountData != null) holder.invalidCount.setText(String.valueOf(invalidCountData.getCount()));
                         if (fixedCountData != null) holder.fixedCount.setText(String.valueOf(fixedCountData.getCount()));
 
-                        // Update local reaction state
                         if (userReactions.containsKey(reactionType)) {
-                            userReactions.remove(reactionType); // Undo reaction
+                            userReactions.remove(reactionType);
                         } else {
-                            userReactions.put(reactionType, true); // Add new reaction
+                            userReactions.put(reactionType, true);
                         }
 
                         Toast.makeText(context, "Reaction " + (userReactions.containsKey(reactionType) ? "added" : "removed"), Toast.LENGTH_SHORT).show();
@@ -197,9 +301,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                         Toast.makeText(context, "Failed to add reaction", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    // Handle specific error cases
                     if (response.code() == 400) {
-                        // Server is rejecting due to validation (likely reaction limit)
                         Toast.makeText(context, "Max 2 reactions per post", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e(TAG, "Unsuccessful response: " + response.code() + " - " + response.message());
@@ -229,7 +331,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         context.startActivity(intent);
     }
 
-    // Update comment count for a specific post
     public void updateCommentCount(int issueId, int newCommentCount) {
         for (int i = 0; i < postList.size(); i++) {
             Post post = postList.get(i);
@@ -242,10 +343,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
     static class PostViewHolder extends RecyclerView.ViewHolder {
-        TextView postAuthor, postCategory, postTime, postTitle, postDescription;
+        TextView postAuthor, postCategory, postTime, postTitle, postDescription, postSeeMore;
         TextView supportCount, affectedCount, notSureCount, invalidCount, fixedCount, commentCount;
-        ImageView postAuthorProfile;
+        ImageView postAuthorProfile, postImage1, postImage2;
         View supportReaction, affectedReaction, notSureReaction, invalidReaction, fixedReaction;
+        View postImagesContainer;
+        com.google.android.material.imageview.ShapeableImageView threeDotIcon;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -254,6 +357,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             postTime = itemView.findViewById(R.id.postTime);
             postTitle = itemView.findViewById(R.id.postTitle);
             postDescription = itemView.findViewById(R.id.postDescription);
+            postSeeMore = itemView.findViewById(R.id.postSeeMore);
             supportCount = itemView.findViewById(R.id.supportCount);
             affectedCount = itemView.findViewById(R.id.affectedCount);
             notSureCount = itemView.findViewById(R.id.notSureCount);
@@ -261,15 +365,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             fixedCount = itemView.findViewById(R.id.fixedCount);
             commentCount = itemView.findViewById(R.id.commentCount);
             postAuthorProfile = itemView.findViewById(R.id.postAuthorProfile);
-
-            // Reaction containers
+            postImage1 = itemView.findViewById(R.id.postImage1);
+            postImage2 = itemView.findViewById(R.id.postImage2);
+            postImagesContainer = itemView.findViewById(R.id.postImagesContainer);
             supportReaction = itemView.findViewById(R.id.supportReaction);
             affectedReaction = itemView.findViewById(R.id.affectedReaction);
             notSureReaction = itemView.findViewById(R.id.notSureReaction);
             invalidReaction = itemView.findViewById(R.id.invalidReaction);
             fixedReaction = itemView.findViewById(R.id.fixedReaction);
+            threeDotIcon = itemView.findViewById(R.id.threeDotIcon);
 
-            Log.d("PostViewHolder", "Initialized views");
+            // Log if any views are null
+            if (postImage1 == null) Log.e(TAG, "postImage1 is null");
+            if (postImage2 == null) Log.e(TAG, "postImage2 is null");
+            if (postImagesContainer == null) Log.e(TAG, "postImagesContainer is null");
+            if (postSeeMore == null) Log.e(TAG, "postSeeMore is null");
+            if (threeDotIcon == null) Log.e(TAG, "threeDotIcon is null");
+
+            Log.d(TAG, "Initialized PostViewHolder views");
         }
     }
 }

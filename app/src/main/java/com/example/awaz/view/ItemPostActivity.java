@@ -1,8 +1,12 @@
 package com.example.awaz.view;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,11 +14,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.awaz.R;
 import com.example.awaz.model.Post;
 import com.example.awaz.model.ReactionRequest;
 import com.example.awaz.model.ReactionResponse;
 import com.example.awaz.service.RetrofitClient;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,15 +36,17 @@ public class ItemPostActivity extends AppCompatActivity {
 
     private static final String TAG = "ItemPostActivity";
     private Post post;
-    private Map<String, Boolean> userReactions = new HashMap<>(); // Track user's reactions
+    private Map<String, Boolean> userReactions = new HashMap<>();
     private ImageView supportIcon, affectedIcon, notSureIcon, invalidIcon, fixedIcon;
+    private ImageView postImage1, postImage2;
+    private View postImagesContainer;
+    private com.google.android.material.imageview.ShapeableImageView threeDotIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.item_post);
 
-        // Get post from intent
         post = (Post) getIntent().getSerializableExtra("post");
         if (post == null) {
             Toast.makeText(this, "Error: Post data not found", Toast.LENGTH_SHORT).show();
@@ -46,23 +57,34 @@ public class ItemPostActivity extends AppCompatActivity {
         Log.d(TAG, "Post issueId: " + post.getIssueId());
         Log.d(TAG, "Post commentCount: " + post.getCommentCount());
 
-        // Initialize UI elements
         TextView postTitle = findViewById(R.id.postTitle);
         TextView postDescription = findViewById(R.id.postDescription);
         TextView postSeeMore = findViewById(R.id.postSeeMore);
+        TextView postAuthor = findViewById(R.id.postAuthor);
+        TextView postCategory = findViewById(R.id.postCategory);
+        TextView postTime = findViewById(R.id.postTime);
         TextView supportCount = findViewById(R.id.supportCount);
         TextView affectedCount = findViewById(R.id.affectedCount);
         TextView notSureCount = findViewById(R.id.notSureCount);
         TextView invalidCount = findViewById(R.id.invalidCount);
         TextView fixedCount = findViewById(R.id.fixedCount);
         TextView commentCount = findViewById(R.id.commentCount);
+        ImageView postAuthorProfile = findViewById(R.id.postAuthorProfile);
         supportIcon = findViewById(R.id.supportIcon);
         affectedIcon = findViewById(R.id.affectedIcon);
         notSureIcon = findViewById(R.id.notSureIcon);
         invalidIcon = findViewById(R.id.invalidIcon);
         fixedIcon = findViewById(R.id.fixedIcon);
+        postImage1 = findViewById(R.id.postImage1);
+        postImage2 = findViewById(R.id.postImage2);
+        postImagesContainer = findViewById(R.id.postImagesContainer);
+        threeDotIcon = findViewById(R.id.threeDotIcon);
 
-        // Set initial counts
+        postTitle.setText(post.getTitle());
+        postDescription.setText(post.getDescription());
+        postAuthor.setText(post.getUsername());
+        postCategory.setText(post.getCategory());
+        postTime.setText(post.getCreatedAt());
         supportCount.setText(String.valueOf(post.getSupportCount()));
         affectedCount.setText(String.valueOf(post.getAffectedCount()));
         notSureCount.setText(String.valueOf(post.getNotSureCount()));
@@ -70,7 +92,101 @@ public class ItemPostActivity extends AppCompatActivity {
         fixedCount.setText(String.valueOf(post.getFixedCount()));
         commentCount.setText(String.valueOf(post.getCommentCount()) + " comments");
 
-        // Set click listeners for navigation
+        // Set click listener for threeDotIcon
+        threeDotIcon.setOnClickListener(v -> showBottomSheetMenu());
+
+        // Load profile image
+        String profileImagePath = post.getProfileImage();
+        Log.d(TAG, "Raw profileImagePath from API: " + profileImagePath);
+        if (profileImagePath != null && !profileImagePath.isEmpty()) {
+            String imageUrl;
+            if (profileImagePath.startsWith("http://") || profileImagePath.startsWith("https://")) {
+                imageUrl = profileImagePath;
+                Log.d(TAG, "Using full URL for profile: " + imageUrl);
+            } else {
+                imageUrl = RetrofitClient.getBaseUrl() + (profileImagePath.startsWith("/storage/") ? "" : "/storage/") + profileImagePath;
+                Log.d(TAG, "Constructed URL for profile: " + imageUrl);
+            }
+
+            String accessToken = RetrofitClient.getAccessToken(this);
+            GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                    ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .build())
+                    : new GlideUrl(imageUrl);
+
+            Glide.with(this)
+                    .load(glideUrl)
+                    .apply(new RequestOptions()
+                            .placeholder(R.drawable.profile)
+                            .error(R.drawable.profile)
+                            .circleCrop())
+                    .into(postAuthorProfile);
+        } else {
+            Glide.with(this).load(R.drawable.profile).into(postAuthorProfile);
+        }
+
+        // Load post images and control visibility
+        String baseUrl = RetrofitClient.getBaseUrl();
+        boolean hasImages = false;
+
+        if (post.getImage1() != null && !post.getImage1().isEmpty()) {
+            String imageUrl;
+            if (post.getImage1().startsWith("http://") || post.getImage1().startsWith("https://")) {
+                imageUrl = post.getImage1();
+                Log.d(TAG, "Using full URL for image1: " + imageUrl);
+            } else {
+                imageUrl = baseUrl + (post.getImage1().startsWith("/storage/") ? "" : "/storage/") + post.getImage1();
+                Log.d(TAG, "Constructed URL for image1: " + imageUrl);
+            }
+
+            String accessToken = RetrofitClient.getAccessToken(this);
+            GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                    ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .build())
+                    : new GlideUrl(imageUrl);
+
+            Glide.with(this)
+                    .load(glideUrl)
+                    .placeholder(R.drawable.sample1)
+                    .error(R.drawable.sample1)
+                    .into(postImage1);
+            hasImages = true;
+        } else {
+            postImage1.setVisibility(View.GONE);
+        }
+
+        if (post.getImage2() != null && !post.getImage2().isEmpty()) {
+            String imageUrl;
+            if (post.getImage2().startsWith("http://") || post.getImage2().startsWith("https://")) {
+                imageUrl = post.getImage2();
+                Log.d(TAG, "Using full URL for image2: " + imageUrl);
+            } else {
+                imageUrl = baseUrl + (post.getImage2().startsWith("/storage/") ? "" : "/storage/") + post.getImage2();
+                Log.d(TAG, "Constructed URL for image2: " + imageUrl);
+            }
+
+            String accessToken = RetrofitClient.getAccessToken(this);
+            GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                    ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .build())
+                    : new GlideUrl(imageUrl);
+
+            Glide.with(this)
+                    .load(glideUrl)
+                    .placeholder(R.drawable.sample2)
+                    .error(R.drawable.sample2)
+                    .into(postImage2);
+            postImage2.setVisibility(View.VISIBLE);
+            hasImages = true;
+        } else {
+            postImage2.setVisibility(View.GONE);
+        }
+
+        postImagesContainer.setVisibility(hasImages ? View.VISIBLE : View.GONE);
+
         postTitle.setOnClickListener(v -> {
             Intent intent = new Intent(ItemPostActivity.this, ItemPostDetailActivity.class);
             intent.putExtra("post", post);
@@ -89,8 +205,42 @@ public class ItemPostActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Set up reaction listeners
         setupReactionListeners();
+    }
+
+    private void showBottomSheetMenu() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View bottomSheetView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_menu, null);
+        bottomSheetDialog.setContentView(bottomSheetView);
+
+        TextView shareOption = bottomSheetView.findViewById(R.id.share_option);
+        TextView reportOption = bottomSheetView.findViewById(R.id.report_option);
+        TextView copyLinkOption = bottomSheetView.findViewById(R.id.copy_link_option);
+
+        shareOption.setOnClickListener(v -> {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Share Post");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, post.getTitle() + "\n" + post.getDescription() + "\n\nView more: " + RetrofitClient.getBaseUrl() + "/post/" + post.getIssueId());
+            startActivity(Intent.createChooser(shareIntent, "Share Post"));
+            bottomSheetDialog.dismiss();
+        });
+
+        reportOption.setOnClickListener(v -> {
+            Toast.makeText(this, "Report submitted for post ID: " + post.getIssueId(), Toast.LENGTH_SHORT).show();
+            // TODO: Implement report functionality (e.g., API call to report post)
+            bottomSheetDialog.dismiss();
+        });
+
+        copyLinkOption.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Post Link", RetrofitClient.getBaseUrl() + "/post/" + post.getIssueId());
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(this, "Link copied to clipboard", Toast.LENGTH_SHORT).show();
+            bottomSheetDialog.dismiss();
+        });
+
+        bottomSheetDialog.show();
     }
 
     private void setupReactionListeners() {
@@ -139,7 +289,6 @@ public class ItemPostActivity extends AppCompatActivity {
                     ReactionResponse reactionResponse = response.body();
                     Log.d(TAG, "API Response: " + reactionResponse.toString());
                     if ("success".equals(reactionResponse.getStatus())) {
-                        // Update reaction counts
                         TextView supportCount = findViewById(R.id.supportCount);
                         TextView affectedCount = findViewById(R.id.affectedCount);
                         TextView notSureCount = findViewById(R.id.notSureCount);
@@ -158,47 +307,10 @@ public class ItemPostActivity extends AppCompatActivity {
                         if (invalidCountData != null) invalidCount.setText(String.valueOf(invalidCountData.getCount()));
                         if (fixedCountData != null) fixedCount.setText(String.valueOf(fixedCountData.getCount()));
 
-                        // Update local reaction state
                         if (userReactions.containsKey(reactionType)) {
-                            userReactions.remove(reactionType); // Undo reaction
-                            // Optional: Update icon to gray (unselected)
-                            /* switch (reactionType) {
-                                case "support":
-                                    supportIcon.setImageResource(R.drawable.support_gray);
-                                    break;
-                                case "affected":
-                                    affectedIcon.setImageResource(R.drawable.affected_gray);
-                                    break;
-                                case "not_sure":
-                                    notSureIcon.setImageResource(R.drawable.not_sure_gray);
-                                    break;
-                                case "invalid":
-                                    invalidIcon.setImageResource(R.drawable.invalid_gray);
-                                    break;
-                                case "fixed":
-                                    fixedIcon.setImageResource(R.drawable.fixed_gray);
-                                    break;
-                            } */
+                            userReactions.remove(reactionType);
                         } else {
-                            userReactions.put(reactionType, true); // Add new reaction
-                            // Optional: Update icon to colored (selected)
-                            /* switch (reactionType) {
-                                case "support":
-                                    supportIcon.setImageResource(R.drawable.support_colored);
-                                    break;
-                                case "affected":
-                                    affectedIcon.setImageResource(R.drawable.affected_colored);
-                                    break;
-                                case "not_sure":
-                                    notSureIcon.setImageResource(R.drawable.not_sure_colored);
-                                    break;
-                                case "invalid":
-                                    invalidIcon.setImageResource(R.drawable.invalid_colored);
-                                    break;
-                                case "fixed":
-                                    fixedIcon.setImageResource(R.drawable.fixed_colored);
-                                    break;
-                            } */
+                            userReactions.put(reactionType, true);
                         }
 
                         Toast.makeText(ItemPostActivity.this, "Reaction " + (userReactions.containsKey(reactionType) ? "added" : "removed"), Toast.LENGTH_SHORT).show();
