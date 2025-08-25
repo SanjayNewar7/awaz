@@ -7,7 +7,7 @@ public class Post implements java.io.Serializable {
     private int postId;
 
     @SerializedName("issue_id")
-    private int issueId;
+    private long issueId; // Changed to long
 
     @SerializedName("user_id")
     private int userId;
@@ -69,8 +69,8 @@ public class Post implements java.io.Serializable {
     // Getters and setters
     public int getId() { return postId; }
     public void setId(int postId) { this.postId = postId; }
-    public int getIssueId() { return issueId; }
-    public void setIssueId(int issueId) { this.issueId = issueId; }
+    public int getIssueId() { return (int) issueId; } // Changed to long
+    public void setIssueId(long issueId) { this.issueId = issueId; } // Changed to long
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
     public String getUsername() { return username; }

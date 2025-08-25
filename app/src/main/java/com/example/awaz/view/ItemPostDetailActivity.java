@@ -38,8 +38,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -212,7 +217,7 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         binding.postDescription.setText(post.getDescription());
         binding.issueType.setText(post.getCategory());
         binding.postAuthor.setText(post.getUsername());
-        binding.postTime.setText(post.getCreatedAt());
+        binding.postTime.setText(getRelativeTime(post.getCreatedAt()));
         binding.supportCount.setText(String.valueOf(post.getSupportCount()));
         binding.affectedCount.setText(String.valueOf(post.getAffectedCount()));
         binding.notSureCount.setText(String.valueOf(post.getNotSureCount()));
@@ -322,6 +327,41 @@ public class ItemPostDetailActivity extends AppCompatActivity {
         }
 
         binding.postImagesContainer.setVisibility(hasImages ? View.VISIBLE : View.GONE);
+    }
+
+    private String getRelativeTime(String createdAt) {
+        if (createdAt == null || createdAt.isEmpty()) {
+            Log.w(TAG, "createdAt is null or empty for post ID: " + post.getIssueId());
+            return "unknown";
+        }
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            Date postDate = sdf.parse(createdAt);
+            if (postDate == null) {
+                Log.w(TAG, "Failed to parse createdAt: " + createdAt);
+                return "unknown";
+            }
+
+            long diffInMillis = System.currentTimeMillis() - postDate.getTime();
+            long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds(diffInMillis);
+            long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+            long diffInHours = TimeUnit.MILLISECONDS.toHours(diffInMillis);
+            long diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis);
+
+            if (diffInSeconds < 60) {
+                return "just now";
+            } else if (diffInMinutes < 60) {
+                return diffInMinutes + " min" + (diffInMinutes == 1 ? "" : "s") + " ago";
+            } else if (diffInHours < 24) {
+                return diffInHours + " hr" + (diffInHours == 1 ? "" : "s") + " ago";
+            } else {
+                return diffInDays + " day" + (diffInDays == 1 ? "" : "s") + " ago";
+            }
+        } catch (ParseException e) {
+            Log.e(TAG, "Error parsing date: " + createdAt + ", Error: " + e.getMessage());
+            return "unknown";
+        }
     }
 
     private void fetchComments() {

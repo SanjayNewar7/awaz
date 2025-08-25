@@ -13,6 +13,8 @@ import com.example.awaz.model.IssuesResponse;
 import com.example.awaz.model.LikeResponse;
 import com.example.awaz.model.LoginRequest;
 import com.example.awaz.model.LoginResponse;
+import com.example.awaz.model.NotificationResponse;
+import com.example.awaz.model.Post;
 import com.example.awaz.model.PostsResponse;
 import com.example.awaz.model.ReactionRequest;
 import com.example.awaz.model.ReactionResponse;
@@ -21,8 +23,6 @@ import com.example.awaz.model.SignupResponse;
 import com.example.awaz.model.UserResponse;
 import com.google.gson.JsonObject;
 
-import org.json.JSONObject;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Call;
@@ -30,6 +30,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -37,10 +38,12 @@ import retrofit2.http.Path;
 
 public class RetrofitClient {
     private static final String TAG = "RetrofitClient";
-    private static final String BASE_URL = "http://192.168.1.70:8000/";
+    private static final String BASE_URL = "http://192.168.1.70:8000/"; // Updated BASE_URL
     private static Retrofit retrofit = null;
     private static final String PREF_NAME = "AuthPrefs";
     private static final String KEY_ACCESS_TOKEN = "access_token";
+    private static final String PREF_NOTIFICATION = "NotificationPrefs";
+    private static final String KEY_CHECKED_NOTIFICATIONS = "checked_notifications";
 
     public static String getBaseUrl() {
         return BASE_URL;
@@ -90,13 +93,15 @@ public class RetrofitClient {
     public static void clearAccessToken(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         prefs.edit().remove(KEY_ACCESS_TOKEN).apply();
-        Log.d(TAG, "Access token cleared");
+        SharedPreferences notificationPrefs = context.getSharedPreferences(PREF_NOTIFICATION, Context.MODE_PRIVATE);
+        notificationPrefs.edit().remove(KEY_CHECKED_NOTIFICATIONS).apply();
+        Log.d(TAG, "Access token and checked notifications cleared");
     }
 
     public interface ApiService {
-        @GET("api/users/{userId}")
+        @GET("users/{userId}")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
-        Call<UserResponse> getUser(@Path("userId") int userId); // Updated to UserResponse
+        Call<UserResponse> getUser(@Path("userId") int userId);
 
         @POST("api/users")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
@@ -140,5 +145,22 @@ public class RetrofitClient {
 
         @POST("api/users/{userId}/like")
         Call<LikeResponse> toggleLike(@Path("userId") int userId);
+
+        @GET("api/notifications")
+        Call<NotificationResponse> getNotifications(@Header("Authorization") String authToken);
+
+        @GET("api/posts/{id}")
+        Call<Post> getPostById(@Path("id") int postId); // Renamed parameter to postId for clarity
+
+        @GET("api/posts/by_issue/{issue_id}")
+        Call<Post> getPostByIssueId(@Path("issue_id") long issueId); // New endpoint
+
+        @POST("api/notifications/{id}/read")
+        Call<Void> markNotificationAsRead(@Path("id") long notificationId);
+
+        @POST("api/notifications/read-all")
+        Call<Void> markAllNotificationsAsRead();
+
+
     }
 }
