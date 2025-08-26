@@ -380,7 +380,23 @@ public class NotificationActivity extends AppCompatActivity {
                         case "electricity": return "Power Issue";
                         case "waste": return "Garbage Issue";
                         case "street lights": return "Street Light Issue";
-                        case "traffict": return "Traffic Issue";
+                        case "traffic": return "Traffic Issue";
+                        case "transport": return "Transport Issue";
+                        case "drainage": return "Drainage Issue";
+                        case "pollution": return "Pollution Issue";
+                        case "robbery": return "Robbery Issue";
+                        case "community": return "Community Issue";
+                        case "healthcare": return "Healthcare Issue";
+                        case "education": return "Education Issue";
+                        case "environmental": return "Environmental Issue";
+                        case "noise": return "Noise Issue";
+                        case "government": return "Government Issue";
+                        case "parks": return "Park Issue";
+                        case "construction": return "Construction Issue";
+                        case "animal": return "Animal Issue";
+                        case "fire": return "Fire Issue";
+                        case "others": return "Other Issue";
+
                         default: return type + " Issue";
                     }
                 }

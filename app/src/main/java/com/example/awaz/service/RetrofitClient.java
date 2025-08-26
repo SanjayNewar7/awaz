@@ -99,7 +99,7 @@ public class RetrofitClient {
     }
 
     public interface ApiService {
-        @GET("users/{userId}")
+        @GET("api/users/{userId}")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         Call<UserResponse> getUser(@Path("userId") int userId);
 
@@ -160,6 +160,7 @@ public class RetrofitClient {
 
         @POST("api/notifications/read-all")
         Call<Void> markAllNotificationsAsRead();
+
 
 
     }

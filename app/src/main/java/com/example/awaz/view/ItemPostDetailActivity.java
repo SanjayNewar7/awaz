@@ -335,6 +335,11 @@ public class ItemPostDetailActivity extends AppCompatActivity {
             return "unknown";
         }
 
+        // Check if it's a relative time string (e.g., "10 hours ago")
+        if (createdAt.matches("\\d+\\s+(hour|min|day)s?\\s+ago")) {
+            return createdAt; // Return as-is since it's already relative
+        }
+
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             Date postDate = sdf.parse(createdAt);
