@@ -38,7 +38,7 @@ import retrofit2.http.Path;
 
 public class RetrofitClient {
     private static final String TAG = "RetrofitClient";
-    private static final String BASE_URL = "http://192.168.1.70:8000/"; // Updated BASE_URL
+    private static final String BASE_URL = "http://192.168.1.70:8000/";
     private static Retrofit retrofit = null;
     private static final String PREF_NAME = "AuthPrefs";
     private static final String KEY_ACCESS_TOKEN = "access_token";
@@ -111,6 +111,10 @@ public class RetrofitClient {
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         Call<LoginResponse> userLogin(@Body LoginRequest loginRequest);
 
+        @POST("api/change-password")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Call<JsonObject> changePassword(@Body JsonObject passwordData);
+
         @POST("api/issues")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         Call<IssueResponse> createIssue(@Body IssueRequest issueRequest);
@@ -150,18 +154,15 @@ public class RetrofitClient {
         Call<NotificationResponse> getNotifications(@Header("Authorization") String authToken);
 
         @GET("api/posts/{id}")
-        Call<Post> getPostById(@Path("id") int postId); // Renamed parameter to postId for clarity
+        Call<Post> getPostById(@Path("id") int postId);
 
         @GET("api/posts/by_issue/{issue_id}")
-        Call<Post> getPostByIssueId(@Path("issue_id") long issueId); // New endpoint
+        Call<Post> getPostByIssueId(@Path("issue_id") long issueId);
 
         @POST("api/notifications/{id}/read")
         Call<Void> markNotificationAsRead(@Path("id") long notificationId);
 
         @POST("api/notifications/read-all")
         Call<Void> markAllNotificationsAsRead();
-
-
-
     }
 }
