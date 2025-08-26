@@ -335,11 +335,19 @@ public class ItemPostDetailActivity extends AppCompatActivity {
             return "unknown";
         }
 
-        // Check if it's a relative time string (e.g., "10 hours ago")
-        if (createdAt.matches("\\d+\\s+(hour|min|day)s?\\s+ago")) {
-            return createdAt; // Return as-is since it's already relative
+        // Enhanced regex to handle various relative time formats
+        if (createdAt.matches("\\d+\\s+(minute|min|hour|hr|day)s?\\s+ago") ||
+                createdAt.matches("just now")) {
+            // Normalize the string for consistency
+            if (createdAt.contains("minute")) {
+                createdAt = createdAt.replace("minute", "min");
+            } else if (createdAt.contains("hour")) {
+                createdAt = createdAt.replace("hour", "hr");
+            }
+            return createdAt; // Return relative time as-is
         }
 
+        // Try parsing as absolute date
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             Date postDate = sdf.parse(createdAt);
