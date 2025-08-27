@@ -294,6 +294,13 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                     .error(R.drawable.sample1)
                     .into(binding.postImage1);
             hasImages = true;
+
+            // Add click listener for full-screen view
+            binding.postImage1.setOnClickListener(v -> {
+                Intent intent = new Intent(ItemPostDetailActivity.this, FullscreenImageActivity.class);
+                intent.putExtra("image_url", imageUrl);
+                startActivity(intent);
+            });
         } else {
             binding.postImage1.setVisibility(View.GONE);
         }
@@ -322,6 +329,13 @@ public class ItemPostDetailActivity extends AppCompatActivity {
                     .into(binding.postImage2);
             binding.postImage2.setVisibility(View.VISIBLE);
             hasImages = true;
+
+            // Add click listener for full-screen view
+            binding.postImage2.setOnClickListener(v -> {
+                Intent intent = new Intent(ItemPostDetailActivity.this, FullscreenImageActivity.class);
+                intent.putExtra("image_url", imageUrl);
+                startActivity(intent);
+            });
         } else {
             binding.postImage2.setVisibility(View.GONE);
         }

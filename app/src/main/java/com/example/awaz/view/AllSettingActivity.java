@@ -30,7 +30,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 public class AllSettingActivity extends AppCompatActivity {
 
     private static final String TAG = "AllSettingActivity";
-    private static final String BASE_URL = "http://192.168.1.70:8000"; // Your server base URL
+    private static final String BASE_URL = "http://192.168.1.70:8000";
     private static final int PICK_IMAGE_REQUEST = 1;
     private ShapeableImageView profileImage;
     private ActivityResultLauncher<Intent> imagePickerLauncher;

@@ -19,6 +19,7 @@ import com.bumptech.glide.load.model.LazyHeaders;
 import com.example.awaz.R;
 import com.example.awaz.model.CommentResponse;
 import com.example.awaz.service.RetrofitClient;
+import com.example.awaz.view.FullscreenImageActivity;
 import com.example.awaz.view.ProfileActivity;
 
 import java.text.ParseException;
@@ -56,20 +57,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         holder.commentTime.setText(getRelativeTime(comment.getCreatedAt()));
 
         // Load profile image
-        String baseUrl = RetrofitClient.getBaseUrl() + "storage/";
+        String baseUrl = RetrofitClient.getBaseUrl();
         if (comment.getProfileImage() != null && !comment.getProfileImage().isEmpty()) {
-            Glide.with(context).load(baseUrl + comment.getProfileImage())
-                    .placeholder(R.drawable.profile)
-                    .error(R.drawable.profile)
-                    .circleCrop()
-                    .into(holder.profileImage);
-        } else {
-            Glide.with(context).load(R.drawable.profile).into(holder.profileImage);
-        }
+            String imageUrl;
+            if (comment.getProfileImage().startsWith("http://") || comment.getProfileImage().startsWith("https://")) {
+                imageUrl = comment.getProfileImage();
+                Log.d(TAG, "Using full URL for profile image at position " + position + ": " + imageUrl);
+            } else {
+                imageUrl = baseUrl + (comment.getProfileImage().startsWith("/storage/") ? "" : "/storage/") + comment.getProfileImage();
+                Log.d(TAG, "Constructed URL for profile image at position " + position + ": " + imageUrl);
+            }
 
-        // Load comment image if available
-        if (comment.getImagePath() != null && !comment.getImagePath().isEmpty()) {
-            String imageUrl = baseUrl + comment.getImagePath();
             String accessToken = RetrofitClient.getAccessToken(context);
             GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
                     ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
@@ -79,12 +77,44 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
             Glide.with(context)
                     .load(glideUrl)
-                    .thumbnail(0.25f) // Scale down to 1/4 size
+                    .placeholder(R.drawable.profile)
+                    .error(R.drawable.profile)
+                    .circleCrop()
+                    .into(holder.profileImage);
+        } else {
+            Log.d(TAG, "No profile image for comment at position " + position);
+            Glide.with(context).load(R.drawable.profile).into(holder.profileImage);
+        }
+
+        // Load comment image if available
+        if (comment.getImagePath() != null && !comment.getImagePath().isEmpty()) {
+            String imageUrl = baseUrl + "storage/" + comment.getImagePath();
+            Log.d(TAG, "Constructed URL for comment image at position " + position + ": " + imageUrl);
+
+            String accessToken = RetrofitClient.getAccessToken(context);
+            GlideUrl glideUrl = accessToken != null && !accessToken.isEmpty()
+                    ? new GlideUrl(imageUrl, new LazyHeaders.Builder()
+                    .addHeader("Authorization", "Bearer " + accessToken)
+                    .build())
+                    : new GlideUrl(imageUrl);
+
+            Glide.with(context)
+                    .load(glideUrl)
+                    .thumbnail(0.25f)
                     .placeholder(R.drawable.profile)
                     .error(R.drawable.profile)
                     .into(holder.commentImage);
             holder.commentImage.setVisibility(View.VISIBLE);
+
+            // Add click listener for full-screen view
+            holder.commentImage.setOnClickListener(v -> {
+                Log.d(TAG, "Comment image clicked at position " + position + ", launching FullscreenImageActivity with URL: " + imageUrl);
+                Intent intent = new Intent(context, FullscreenImageActivity.class);
+                intent.putExtra("image_url", imageUrl);
+                context.startActivity(intent);
+            });
         } else {
+            Log.d(TAG, "No comment image for comment at position " + position);
             holder.commentImage.setVisibility(View.GONE);
         }
 
@@ -95,6 +125,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 Toast.makeText(context, "User ID not available", Toast.LENGTH_SHORT).show();
                 return;
             }
+            Log.d(TAG, "Profile image clicked for user ID: " + comment.getUserId());
             Intent intent = new Intent(context, ProfileActivity.class);
             intent.putExtra("user_id", comment.getUserId());
             context.startActivity(intent);
@@ -106,6 +137,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 Toast.makeText(context, "User ID not available", Toast.LENGTH_SHORT).show();
                 return;
             }
+            Log.d(TAG, "Comment author clicked for user ID: " + comment.getUserId());
             Intent intent = new Intent(context, ProfileActivity.class);
             intent.putExtra("user_id", comment.getUserId());
             context.startActivity(intent);
@@ -133,12 +165,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     private String getRelativeTime(String createdAt) {
-        if (createdAt == null || createdAt.isEmpty()) return "unknown";
+        if (createdAt == null || createdAt.isEmpty()) {
+            Log.w(TAG, "createdAt is null or empty");
+            return "unknown";
+        }
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             Date commentDate = sdf.parse(createdAt);
-            if (commentDate == null) return "unknown";
+            if (commentDate == null) {
+                Log.w(TAG, "Failed to parse createdAt: " + createdAt);
+                return "unknown";
+            }
 
             long diffInMillis = System.currentTimeMillis() - commentDate.getTime();
             long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds(diffInMillis);
@@ -156,7 +194,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 return diffInDays + " days ago";
             }
         } catch (ParseException e) {
-            Log.e(TAG, "Error parsing date: " + e.getMessage());
+            Log.e(TAG, "Error parsing date: " + createdAt + ", Error: " + e.getMessage());
             return "unknown";
         }
     }

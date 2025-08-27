@@ -68,5 +68,7 @@
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true"
         android:contentDescription="Comment Image" />
 </LinearLayout>

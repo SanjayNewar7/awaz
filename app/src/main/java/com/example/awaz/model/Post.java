@@ -7,7 +7,7 @@ public class Post implements java.io.Serializable {
     private int postId;
 
     @SerializedName("issue_id")
-    private long issueId; // Changed to long
+    private long issueId;
 
     @SerializedName("user_id")
     private int userId;
