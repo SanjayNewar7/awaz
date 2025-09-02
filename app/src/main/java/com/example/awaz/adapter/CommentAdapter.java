@@ -64,7 +64,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 imageUrl = comment.getProfileImage();
                 Log.d(TAG, "Using full URL for profile image at position " + position + ": " + imageUrl);
             } else {
-                imageUrl = baseUrl + (comment.getProfileImage().startsWith("/storage/") ? "" : "/storage/") + comment.getProfileImage();
+                imageUrl = baseUrl + (comment.getProfileImage().startsWith("storage/") ? "" : "storage/") + comment.getProfileImage();
                 Log.d(TAG, "Constructed URL for profile image at position " + position + ": " + imageUrl);
             }
 

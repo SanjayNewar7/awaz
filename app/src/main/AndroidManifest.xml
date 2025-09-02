@@ -51,6 +51,7 @@
         <activity android:name=".view.RaiseIssueActivity" />
         <activity android:name=".view.MyReportActivity" />
         <activity android:name=".view.NotificationActivity" />
+        <activity android:name=".view.ReapplyCitizenshipActivity" />
 
         <activity
             android:name=".view.SplashActivity"

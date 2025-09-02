@@ -44,6 +44,7 @@ public class FilterActivity extends AppCompatActivity {
             LinearLayout filterLayout = findViewById(R.id.filterLayout);
             LinearLayout raiseIssueLayout = findViewById(R.id.raiseIssueLayout);
             LinearLayout myReportLayout = findViewById(R.id.myReportLayout);
+            LinearLayout myNotificationLayout = findViewById(R.id.myNotificationLayout);
             LinearLayout homeLayout = findViewById(R.id.homeLayout);  // Add home layout
             AutoCompleteTextView districtAutoComplete = findViewById(R.id.filterDistrict);
             Spinner wardSpinner = findViewById(R.id.filterWard);
@@ -70,6 +71,14 @@ public class FilterActivity extends AppCompatActivity {
                     finish();
                 });
             }
+
+            myNotificationLayout.setOnClickListener(view -> {
+                Intent intent = new Intent(FilterActivity.this, NotificationActivity.class);
+                startActivity(intent);
+                finish();
+            });
+
+
 
             // Profile icon click listener
             if (imgProfile != null) {

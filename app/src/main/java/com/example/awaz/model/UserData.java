@@ -63,6 +63,9 @@ public class UserData {
     @SerializedName("posts_count")
     private int postsCount;
 
+    @SerializedName("verification_status")
+    private String verificationStatus;
+
 
 
     public int getUserId() { return userId; }
@@ -119,6 +122,9 @@ public class UserData {
     public boolean isVerified() { return isVerified; }
     public void setVerified(boolean verified) { this.isVerified = verified; }
 
+    public String getVerificationStatus() { return verificationStatus; }
+    public void setVerificationStatus(String verificationStatus) { this.verificationStatus = verificationStatus; }
+
 
 
     @Override
@@ -140,9 +146,11 @@ public class UserData {
                 ", citizenshipBackImage='" + citizenshipBackImage + '\'' +
                 ", citizenshipIdNumber='" + citizenshipIdNumber + '\'' +
                 ", isVerified=" + isVerified +
+                ", verificationStatus='" + verificationStatus + '\'' +
                 ", postsCount=" + postsCount +
                 ", likesCount=" + likesCount +
                 ", isLiked=" + isLiked +
+
                 '}';
     }
 }
