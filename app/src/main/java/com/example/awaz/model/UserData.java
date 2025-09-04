@@ -54,11 +54,19 @@ public class UserData {
     @SerializedName("is_verified")
     private boolean isVerified;
 
+    @SerializedName("is_liked")
+    private boolean isLiked;
+
     @SerializedName("likes_count")
     private int likesCount;
 
     @SerializedName("posts_count")
     private int postsCount;
+
+    @SerializedName("verification_status")
+    private String verificationStatus;
+
+
 
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
@@ -84,11 +92,23 @@ public class UserData {
     public void setBio(String bio) { this.bio = bio; }
     public String getProfileImage() { return profileImage; }
     public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
+    }
     public int getPostsCount() { return postsCount; }
     public void setPostsCount(int postsCount) { this.postsCount = postsCount; }
-    public int getLikesCount() { return likesCount; }
-    public void setLikesCount(int likesCount) { this.likesCount = likesCount; }
+    public boolean isLiked() {
+        return isLiked;
+    }
 
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
     // Added missing getter methods
     public String getCitizenshipFrontImage() { return citizenshipFrontImage; }
     public void setCitizenshipFrontImage(String citizenshipFrontImage) { this.citizenshipFrontImage = citizenshipFrontImage; }
@@ -101,6 +121,11 @@ public class UserData {
 
     public boolean isVerified() { return isVerified; }
     public void setVerified(boolean verified) { this.isVerified = verified; }
+
+    public String getVerificationStatus() { return verificationStatus; }
+    public void setVerificationStatus(String verificationStatus) { this.verificationStatus = verificationStatus; }
+
+
 
     @Override
     public String toString() {
@@ -121,8 +146,11 @@ public class UserData {
                 ", citizenshipBackImage='" + citizenshipBackImage + '\'' +
                 ", citizenshipIdNumber='" + citizenshipIdNumber + '\'' +
                 ", isVerified=" + isVerified +
+                ", verificationStatus='" + verificationStatus + '\'' +
                 ", postsCount=" + postsCount +
                 ", likesCount=" + likesCount +
+                ", isLiked=" + isLiked +
+
                 '}';
     }
 }

@@ -5,12 +5,26 @@
         <item>Water Supply</item>
         <item>Electricity</item>
         <item>Roads</item>
-        <item>Waste Management</item>
-        <item>Public Transport</item>
-        <item>Street Lighting</item>
+        <item>Waste</item>
+        <item>Transport</item>
+        <item>Street Lights</item>
         <item>Drainage</item>
+        <item>Pollution</item>
+        <item>Robbery</item>
+        <item>Community</item>
+        <item>Healthcare</item>
+        <item>Education</item>
+        <item>Environmental</item>
+        <item>Traffic</item>
+        <item>Noise</item>
+        <item>Government</item>
+        <item>Parks</item>
+        <item>Construction</item>
+        <item>Animal</item>
+        <item>Fire</item>
         <item>Others</item>
     </string-array>
+
     <string-array name="districts">
         <item>Select District</item>
         <item>Bhojpur</item>

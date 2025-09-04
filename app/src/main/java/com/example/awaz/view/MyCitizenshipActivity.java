@@ -30,6 +30,7 @@ public class MyCitizenshipActivity extends AppCompatActivity {
     private ImageView frontImage;
     private ImageView backImage;
     private Button verifyButton;
+    private Button reapplyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,12 @@ public class MyCitizenshipActivity extends AppCompatActivity {
         frontImage = findViewById(R.id.frontImage);
         backImage = findViewById(R.id.backImage);
         verifyButton = findViewById(R.id.verifyButton);
+        reapplyButton = findViewById(R.id.reapplyButton); // Add this ID
+
+        reapplyButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MyCitizenshipActivity.this, ReapplyCitizenshipActivity.class);
+            startActivity(intent);
+        });
 
         fetchUserData();
     }
@@ -63,29 +70,45 @@ public class MyCitizenshipActivity extends AppCompatActivity {
                     Log.d(TAG, "Response Body: " + new Gson().toJson(userResponse));
                     UserData user = userResponse.getUser();
                     if (user != null) {
-                        // Simply use the URLs as provided by the API
-                        // The server already returns complete URLs
                         String frontUrl = user.getCitizenshipFrontImage();
                         String backUrl = user.getCitizenshipBackImage();
 
                         Log.d(TAG, "Front URL (from API): " + frontUrl);
                         Log.d(TAG, "Back URL (from API): " + backUrl);
-                        Log.d(TAG, "Is Verified: " + user.isVerified());
+                        String status = user.getVerificationStatus();
+                        Log.d(TAG, "Verification Status: " + status);
 
                         loadImageWithGlide(frontUrl, frontImage);
                         loadImageWithGlide(backUrl, backImage);
 
-                        if (user.isVerified()) {
+                        // Update button based on verification_status
+                        if ("verified".equalsIgnoreCase(status)) {
                             verifyButton.setText("Verified");
                             verifyButton.setBackgroundResource(R.drawable.rounded_button_green);
-                        } else {
-                            verifyButton.setText("Not Verified");
+                            reapplyButton.setVisibility(Button.GONE); // Hide reapply button
+                        } else if ("rejected".equalsIgnoreCase(status)) {
+                            verifyButton.setText("Rejected");
                             verifyButton.setBackgroundResource(R.drawable.rounded_button_red);
+                            reapplyButton.setVisibility(Button.VISIBLE); // Show reapply button
+                        } else if ("pending".equalsIgnoreCase(status)) {
+                            verifyButton.setText("Pending");
+                            verifyButton.setBackgroundResource(R.drawable.rounded_button_orange);
+                            reapplyButton.setVisibility(Button.GONE); // Hide reapply button
+                        } else {
+                            if (user.isVerified()) {
+                                verifyButton.setText("Verified");
+                                verifyButton.setBackgroundResource(R.drawable.rounded_button_green);
+                            } else {
+                                verifyButton.setText("Not Verified");
+                                verifyButton.setBackgroundResource(R.drawable.rounded_button_red);
+                            }
+                            reapplyButton.setVisibility(Button.GONE); // Hide reapply button
                         }
                     } else {
                         Log.e(TAG, "User data is null in response");
                         verifyButton.setText("Error: No User Data");
                         verifyButton.setBackgroundResource(R.drawable.rounded_button_red);
+                        reapplyButton.setVisibility(Button.GONE); // Hide reapply button
                     }
                 } else {
                     Log.e(TAG, "Response unsuccessful: Code " + response.code() + ", Message: " + response.message());
@@ -99,6 +122,7 @@ public class MyCitizenshipActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         Log.e(TAG, "Failed to read error body", e);
                     }
+                    reapplyButton.setVisibility(Button.GONE); // Hide reapply button
                 }
             }
 
@@ -107,6 +131,7 @@ public class MyCitizenshipActivity extends AppCompatActivity {
                 Log.e(TAG, "API Failure: " + t.getMessage(), t);
                 verifyButton.setText("Network Error");
                 verifyButton.setBackgroundResource(R.drawable.rounded_button_red);
+                if (reapplyButton != null) reapplyButton.setVisibility(Button.GONE); // Hide reapply button
             }
         });
     }

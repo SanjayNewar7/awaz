@@ -4,21 +4,28 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.awaz.model.CitizenshipImageRequest;
 import com.example.awaz.model.CommentRequest;
 import com.example.awaz.model.CommentResponse;
 import com.example.awaz.model.CommentsResponse;
 import com.example.awaz.model.IssueRequest;
 import com.example.awaz.model.IssueResponse;
 import com.example.awaz.model.IssuesResponse;
+import com.example.awaz.model.LikeResponse;
 import com.example.awaz.model.LoginRequest;
 import com.example.awaz.model.LoginResponse;
+import com.example.awaz.model.NotificationResponse;
+import com.example.awaz.model.Post;
 import com.example.awaz.model.PostsResponse;
 import com.example.awaz.model.ReactionRequest;
 import com.example.awaz.model.ReactionResponse;
 import com.example.awaz.model.SignupRequest;
 import com.example.awaz.model.SignupResponse;
+import com.example.awaz.model.SystemNotification;
 import com.example.awaz.model.UserResponse;
 import com.google.gson.JsonObject;
+
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -27,6 +34,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -38,6 +46,8 @@ public class RetrofitClient {
     private static Retrofit retrofit = null;
     private static final String PREF_NAME = "AuthPrefs";
     private static final String KEY_ACCESS_TOKEN = "access_token";
+    private static final String PREF_NOTIFICATION = "NotificationPrefs";
+    private static final String KEY_CHECKED_NOTIFICATIONS = "checked_notifications";
 
     public static String getBaseUrl() {
         return BASE_URL;
@@ -87,13 +97,15 @@ public class RetrofitClient {
     public static void clearAccessToken(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         prefs.edit().remove(KEY_ACCESS_TOKEN).apply();
-        Log.d(TAG, "Access token cleared");
+        SharedPreferences notificationPrefs = context.getSharedPreferences(PREF_NOTIFICATION, Context.MODE_PRIVATE);
+        notificationPrefs.edit().remove(KEY_CHECKED_NOTIFICATIONS).apply();
+        Log.d(TAG, "Access token and checked notifications cleared");
     }
 
     public interface ApiService {
-        @GET("users/{userId}")
+        @GET("api/users/{userId}")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
-        Call<UserResponse> getUser(@Path("userId") int userId); // Updated to UserResponse
+        Call<UserResponse> getUser(@Path("userId") int userId);
 
         @POST("api/users")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
@@ -102,6 +114,10 @@ public class RetrofitClient {
         @POST("api/user-login")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         Call<LoginResponse> userLogin(@Body LoginRequest loginRequest);
+
+        @POST("api/change-password")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Call<JsonObject> changePassword(@Body JsonObject passwordData);
 
         @POST("api/issues")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
@@ -134,5 +150,41 @@ public class RetrofitClient {
         @GET("api/posts")
         @Headers({"Content-Type: application/json", "Accept: application/json"})
         Call<PostsResponse> getPosts();
+
+        @POST("api/users/{userId}/like")
+        Call<LikeResponse> toggleLike(@Path("userId") int userId);
+
+        @GET("api/notifications")
+        Call<NotificationResponse> getNotifications(@Header("Authorization") String authToken);
+
+        @GET("api/posts/{id}")
+        Call<Post> getPostById(@Path("id") int postId);
+
+        @GET("api/posts/by_issue/{issue_id}")
+        Call<Post> getPostByIssueId(@Path("issue_id") long issueId);
+
+        @POST("api/notifications/{id}/read")
+        Call<Void> markNotificationAsRead(@Path("id") long notificationId);
+
+        @POST("api/notifications/read-all")
+        Call<Void> markAllNotificationsAsRead();
+
+        @GET("api/system-notifications")
+        Call<List<SystemNotification>> getSystemNotifications();
+
+        @POST("api/system-notifications/{id}/read")
+        Call<Void> markSystemNotificationAsRead(@Path("id") long notificationId);
+
+        @POST("api/system-notifications/read-all")
+        Call<Void> markAllSystemNotificationsAsRead();
+
+
+        @POST("api/users/me/update-citizenship-images")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Call<UserResponse> updateCitizenshipImages(@Body CitizenshipImageRequest request);
+
+
+
+
     }
 }

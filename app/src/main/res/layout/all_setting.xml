@@ -383,6 +383,40 @@
                         android:contentDescription="Expand" />
                 </LinearLayout>
 
+
+                <LinearLayout
+                    android:id="@+id/logoutLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="12dp"
+                    android:background="@drawable/selector_menu_item"
+                    android:layout_marginTop="8dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/log_out"
+                        android:contentDescription="Exit" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Log out"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:layout_marginStart="16dp" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/see_more_icon"
+                        android:contentDescription="Expand" />
+                </LinearLayout>
+
+
+
                 <LinearLayout
                     android:id="@+id/exitLayout"
                     android:layout_width="match_parent"

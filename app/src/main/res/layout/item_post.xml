@@ -4,16 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="#FAFAFA"
     android:padding="12dp">
 
-    <!-- Post Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <!-- Circular Profile Image -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/postAuthorProfile"
             android:layout_width="30dp"
@@ -42,7 +41,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="raised an issue of "
+                android:text=" raised an issue of "
                 android:textColor="@color/post_text"
                 android:textSize="12sp" />
 
@@ -56,8 +55,8 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Three Dot Icon -->
         <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/threeDotIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/three_dot"
@@ -75,7 +74,6 @@
         android:layout_marginStart="38dp"
         android:layout_marginTop="-10dp" />
 
-    <!-- Post Title -->
     <TextView
         android:id="@+id/postTitle"
         android:layout_width="match_parent"
@@ -86,17 +84,15 @@
         android:textSize="12sp"
         android:layout_marginTop="6dp" />
 
-    <!-- Post Description -->
     <TextView
         android:id="@+id/postDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="The road near Ramghat, Ward 4 has been in a terrible condition for months. Potholes are everywhere, making it dangerous for pedestrians and vehicles. During rainy days, the situation worsens as water fills the potholes, causing accidents. Local residents, including school children and elderly people, are forced to take risky detours. Despite the concerns from the community, no action has been taken by the authorities."
+        android:text="The road near Ramghat, Ward 4 has been in a terrible condition for months..."
         android:maxLines="2"
         android:textColor="@color/post_text"
         android:textSize="12sp" />
 
-    <!-- Post SeeMore -->
     <TextView
         android:id="@+id/postSeeMore"
         android:layout_width="match_parent"
@@ -108,20 +104,23 @@
         android:maxLines="2"
         android:ellipsize="end" />
 
-    <!-- Post Images -->
     <LinearLayout
+        android:id="@+id/postImagesContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="8dp"
-        android:gravity="center">
+        android:gravity="center"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/postImage1"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
+            android:maxHeight="400dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             android:src="@drawable/sample1"
             android:clickable="true"
             android:focusable="true" />
@@ -129,17 +128,18 @@
         <ImageView
             android:id="@+id/postImage2"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
-            android:scaleType="centerCrop"
+            android:maxHeight="400dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             android:src="@drawable/sample2"
             android:clickable="true"
             android:focusable="true" />
     </LinearLayout>
 
-    <!-- Reaction Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -148,16 +148,18 @@
         android:layout_marginTop="8dp"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
-        android:background="@color/white"
+        android:background="@color/gray_light_light"
         android:weightSum="5">
 
-        <!-- Support -->
         <LinearLayout
+            android:id="@+id/supportReaction"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -166,6 +168,7 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/supportIcon"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:src="@drawable/support_gray" />
@@ -189,13 +192,15 @@
                 android:gravity="center" />
         </LinearLayout>
 
-        <!-- Affected -->
         <LinearLayout
+            android:id="@+id/affectedReaction"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -204,6 +209,7 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/affectedIcon"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:src="@drawable/affected_gray" />
@@ -227,13 +233,15 @@
                 android:gravity="center" />
         </LinearLayout>
 
-        <!-- Not Sure -->
         <LinearLayout
+            android:id="@+id/notSureReaction"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -242,6 +250,7 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/notSureIcon"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:src="@drawable/not_sure_gray" />
@@ -265,13 +274,15 @@
                 android:gravity="center" />
         </LinearLayout>
 
-        <!-- Invalid -->
         <LinearLayout
+            android:id="@+id/invalidReaction"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -280,6 +291,7 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/invalidIcon"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:src="@drawable/invalid_gray" />
@@ -303,13 +315,15 @@
                 android:gravity="center" />
         </LinearLayout>
 
-        <!-- Fixed -->
         <LinearLayout
+            android:id="@+id/fixedReaction"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -318,6 +332,7 @@
                 android:gravity="center">
 
                 <ImageView
+                    android:id="@+id/fixedIcon"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:src="@drawable/fixed_gray" />
@@ -342,7 +357,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Comment Count Text -->
     <TextView
         android:id="@+id/commentCount"
         android:layout_width="wrap_content"
@@ -351,5 +365,4 @@
         android:textColor="@color/post_text"
         android:textSize="12sp"
         android:layout_marginTop="2dp" />
-
 </LinearLayout>

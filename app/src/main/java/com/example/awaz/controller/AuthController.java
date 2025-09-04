@@ -15,6 +15,7 @@ import com.example.awaz.model.SignupResponse;
 import com.example.awaz.service.RetrofitClient;
 import com.example.awaz.view.LoginActivity;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -196,8 +197,17 @@ public class AuthController {
         });
     }
 
-    public SignupResponse.User getCurrentUser() {
+    public void changePassword(String currentPassword, String newPassword, String confirmPassword, Callback<JsonObject> callback) {
+        JsonObject passwordData = new JsonObject();
+        passwordData.addProperty("current_password", currentPassword);
+        passwordData.addProperty("new_password", newPassword);
+        passwordData.addProperty("new_password_confirmation", confirmPassword);
 
+        Call<JsonObject> call = apiService.changePassword(passwordData);
+        call.enqueue(callback);
+    }
+
+    public SignupResponse.User getCurrentUser() {
         return null;
     }
 }

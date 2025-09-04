@@ -13,9 +13,22 @@
     <color name="green_text">#3FBA44</color>
     <color name="yellow">#FF9800</color>
     <color name="green">#008000</color>
+    <color name="progress_bar_tint">#6200EE</color>
+    <color name="blue_500">#2196F3</color>
+    <color name="notification_uncheck">#C3E4FF</color>
+    <color name="gray">#808080</color>
+    <color name="light_blue">#ADD8E6</color>
+    <color name="primary_blue">#1976D2</color>
+    <color name="gray_600">#757575</color>
+    <color name="gray_700">#616161</color>
+    <color name="gray_800">#424242</color>
+    <color name="card_background">#F8F9FA</color>
+    <color name="divider_gray">#E0E0E0</color>
+    <color name="status_green">#388E3C</color>
 
 
 
-    <color name="notification_uncheck">#DFE8FD</color>
+
+
 
 </resources>

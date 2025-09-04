@@ -10,9 +10,15 @@ public class CommentsResponse {
     @SerializedName("comments")
     private List<CommentResponse.Comment> comments;
 
+    @SerializedName("message")
+    private String message; // Add this field
+
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
     public List<CommentResponse.Comment> getComments() { return comments; }
     public void setComments(List<CommentResponse.Comment> comments) { this.comments = comments; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 }

@@ -30,7 +30,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 public class AllSettingActivity extends AppCompatActivity {
 
     private static final String TAG = "AllSettingActivity";
-    private static final String BASE_URL = "http://192.168.1.70:8000"; // Your server base URL
+    private static final String BASE_URL = "http://192.168.1.70:8000";
     private static final int PICK_IMAGE_REQUEST = 1;
     private ShapeableImageView profileImage;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
@@ -55,6 +55,7 @@ public class AllSettingActivity extends AppCompatActivity {
         LinearLayout termsPolicyLayout = findViewById(R.id.termsPolicyLayout);
         LinearLayout aboutUsLayout = findViewById(R.id.aboutUsLayout);
         LinearLayout exitLayout = findViewById(R.id.exitLayout);
+        LinearLayout logoutLayout = findViewById(R.id.logoutLayout);
         ImageView back = findViewById(R.id.backArrow);
         userNameTextView = findViewById(R.id.user_name); // Assuming IDs will be added
         phoneNumberTextView = findViewById(R.id.phone_number); // Assuming IDs will be added
@@ -147,6 +148,20 @@ public class AllSettingActivity extends AppCompatActivity {
             finishAffinity();
             System.exit(0);
         });
+
+        logoutLayout.setOnClickListener(v -> {
+            // Clear session/token
+            RetrofitClient.clearAccessToken(AllSettingActivity.this);
+
+            // Redirect to LoginActivity and clear the back stack
+            Intent intent = new Intent(AllSettingActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+
+            // Finish current activity (optional, because flags already clear stack)
+            finish();
+        });
+
     }
 
     // Method to fetch user data and load profile image

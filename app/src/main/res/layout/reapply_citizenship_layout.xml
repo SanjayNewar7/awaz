@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FA"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Back Arrow -->
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/back_gray"
+            android:contentDescription="Back"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reapply for Citizenship Verification"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#1E3A8A"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Description / Tips -->
+        <TextView
+            android:id="@+id/descriptionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Before reapplying, ensure your documents are correct. Common reasons for rejection:\n\n1. Blurry or unclear images\n2. Missing signature\n3. Incorrect ID number\n4. Damaged document\n5. Mismatch of personal information"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Front Image Upload -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Front Side of Citizenship"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp"/>
+
+        <ImageView
+            android:id="@+id/frontImagePreview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/ic_placeholder"
+            android:contentDescription="Front citizenship image"
+            android:layout_marginBottom="8dp"
+            android:padding="4dp"
+            android:backgroundTint="#E0E0E0"
+            android:elevation="2dp"/>
+
+        <Button
+            android:id="@+id/uploadFrontButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Upload Front Image"
+            android:background="@drawable/rounded_button_blue"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Back Image Upload -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back Side of Citizenship"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:layout_marginBottom="8dp"/>
+
+        <ImageView
+            android:id="@+id/backImagePreview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/ic_placeholder"
+            android:contentDescription="Back citizenship image"
+            android:layout_marginBottom="8dp"
+            android:padding="4dp"
+            android:backgroundTint="#E0E0E0"
+            android:elevation="2dp"/>
+
+        <Button
+            android:id="@+id/uploadBackButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Upload Back Image"
+            android:background="@drawable/rounded_button_blue"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="32dp"/>
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit Reapplication"
+            android:background="@drawable/rounded_button_green"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="16dp"/>
+
+    </LinearLayout>
+</ScrollView>
