@@ -349,16 +349,26 @@ public class ItemPostDetailActivity extends AppCompatActivity {
             return "unknown";
         }
 
-        // Enhanced regex to handle various relative time formats
-        if (createdAt.matches("\\d+\\s+(minute|min|hour|hr|day)s?\\s+ago") ||
+        // Enhanced regex to handle seconds, minutes, hours, days, weeks, months, years, and "just now"
+        if (createdAt.matches("\\d+\\s+(second|sec|minute|min|hour|hr|day|week|month|year)s?\\s+ago") ||
                 createdAt.matches("just now")) {
+
             // Normalize the string for consistency
-            if (createdAt.contains("minute")) {
+            if (createdAt.contains("second")) {
+                createdAt = createdAt.replace("second", "sec");
+            } else if (createdAt.contains("minute")) {
                 createdAt = createdAt.replace("minute", "min");
             } else if (createdAt.contains("hour")) {
                 createdAt = createdAt.replace("hour", "hr");
+            } else if (createdAt.contains("week")) {
+                createdAt = createdAt.replace("week", "wk");
+            } else if (createdAt.contains("month")) {
+                createdAt = createdAt.replace("month", "mo");
+            } else if (createdAt.contains("year")) {
+                createdAt = createdAt.replace("year", "yr");
             }
-            return createdAt; // Return relative time as-is
+
+            return createdAt; // Return normalized relative time
         }
 
         // Try parsing as absolute date
@@ -377,19 +387,29 @@ public class ItemPostDetailActivity extends AppCompatActivity {
             long diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis);
 
             if (diffInSeconds < 60) {
-                return "just now";
+                return diffInSeconds + " sec" + (diffInSeconds == 1 ? "" : "s") + " ago";
             } else if (diffInMinutes < 60) {
                 return diffInMinutes + " min" + (diffInMinutes == 1 ? "" : "s") + " ago";
             } else if (diffInHours < 24) {
                 return diffInHours + " hr" + (diffInHours == 1 ? "" : "s") + " ago";
-            } else {
+            } else if (diffInDays < 7) {
                 return diffInDays + " day" + (diffInDays == 1 ? "" : "s") + " ago";
+            } else if (diffInDays < 30) {
+                long weeks = diffInDays / 7;
+                return weeks + " wk" + (weeks == 1 ? "" : "s") + " ago";
+            } else if (diffInDays < 365) {
+                long months = diffInDays / 30;
+                return months + " mo" + (months == 1 ? "" : "s") + " ago";
+            } else {
+                long years = diffInDays / 365;
+                return years + " yr" + (years == 1 ? "" : "s") + " ago";
             }
         } catch (ParseException e) {
             Log.e(TAG, "Error parsing date: " + createdAt + ", Error: " + e.getMessage());
             return "unknown";
         }
     }
+
 
     private void fetchComments() {
         RetrofitClient.ApiService apiService = RetrofitClient.getApiService(this);

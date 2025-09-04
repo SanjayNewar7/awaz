@@ -86,7 +86,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Citizenship verification plays a vital role in maintaining authenticity, trust, and accountability. To keep Awaz a trustworthy and impactful platform, we verify users with a copy of their Citizenship Certificate or National ID."
+                        android:text="Citizenship verification plays a vital role in maintaining authenticity, trust, and accountability. To keep Awaz a trustworthy and impactful platform, we verify users with a copy of their Citizenship Certificate or National ID.                       NOTE: It can take 2-3 Days to verify your Citizenship"
                         android:textColor="@color/black"
                         android:textSize="12sp"
                         android:lineSpacingMultiplier="1.1"

@@ -107,6 +107,11 @@ public class HomeMainActivity extends AppCompatActivity {
             Intent intent = new Intent(HomeMainActivity.this, FilterActivity.class);
             startActivity(intent);
         });
+        ShapeableImageView imgSystemNotification = findViewById(R.id.imgSystemNotification);
+        imgSystemNotification.setOnClickListener(v -> {
+            startActivity(new Intent(this, SystemNotificationActivity.class));
+        });
+
     }
 
     // Method to fetch user data and load profile image

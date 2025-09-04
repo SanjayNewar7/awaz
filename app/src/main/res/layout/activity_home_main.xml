@@ -24,6 +24,21 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true" />
 
+
+        <!-- System Notification Icon (added to the left of profile) -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgSystemNotification"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_toStartOf="@id/imgProfile"
+            android:layout_marginEnd="16dp"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/government_of_nepal"
+            android:contentDescription="System Notifications"
+            app:shapeAppearanceOverlay="@style/CircleImage" />
+
+
         <!-- Profile Icon -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgProfile"

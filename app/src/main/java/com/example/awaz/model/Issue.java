@@ -1,8 +1,9 @@
 package com.example.awaz.model;
 
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
-public class Issue {
+public class Issue implements Serializable {
     @SerializedName("id")
     private int id;
 
@@ -41,6 +42,9 @@ public class Issue {
 
     @SerializedName("updated_at")
     private String updatedAt;
+
+    @SerializedName("status")
+    private String status;
 
     // Getters and setters
     public int getId() { return id; }
@@ -81,4 +85,7 @@ public class Issue {
 
     public String getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.awaz.model.CitizenshipImageRequest;
 import com.example.awaz.model.CommentRequest;
 import com.example.awaz.model.CommentResponse;
 import com.example.awaz.model.CommentsResponse;
@@ -20,8 +21,11 @@ import com.example.awaz.model.ReactionRequest;
 import com.example.awaz.model.ReactionResponse;
 import com.example.awaz.model.SignupRequest;
 import com.example.awaz.model.SignupResponse;
+import com.example.awaz.model.SystemNotification;
 import com.example.awaz.model.UserResponse;
 import com.google.gson.JsonObject;
+
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -164,5 +168,23 @@ public class RetrofitClient {
 
         @POST("api/notifications/read-all")
         Call<Void> markAllNotificationsAsRead();
+
+        @GET("api/system-notifications")
+        Call<List<SystemNotification>> getSystemNotifications();
+
+        @POST("api/system-notifications/{id}/read")
+        Call<Void> markSystemNotificationAsRead(@Path("id") long notificationId);
+
+        @POST("api/system-notifications/read-all")
+        Call<Void> markAllSystemNotificationsAsRead();
+
+
+        @POST("api/users/me/update-citizenship-images")
+        @Headers({"Content-Type: application/json", "Accept: application/json"})
+        Call<UserResponse> updateCitizenshipImages(@Body CitizenshipImageRequest request);
+
+
+
+
     }
 }
