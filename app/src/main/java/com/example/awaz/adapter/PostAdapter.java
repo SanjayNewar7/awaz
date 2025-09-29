@@ -283,19 +283,44 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                         ReactionResponse.ReactionCount invalidCountData = reactionResponse.getReactionCounts().get("invalid");
                         ReactionResponse.ReactionCount fixedCountData = reactionResponse.getReactionCounts().get("fixed");
 
-                        if (supportCountData != null) holder.supportCount.setText(String.valueOf(supportCountData.getCount()));
-                        if (affectedCountData != null) holder.affectedCount.setText(String.valueOf(affectedCountData.getCount()));
-                        if (notSureCountData != null) holder.notSureCount.setText(String.valueOf(notSureCountData.getCount()));
-                        if (invalidCountData != null) holder.invalidCount.setText(String.valueOf(invalidCountData.getCount()));
-                        if (fixedCountData != null) holder.fixedCount.setText(String.valueOf(fixedCountData.getCount()));
+                        // --- Capture oldCount BEFORE updating ---
+                        int oldCount = 0;
+                        int newCount = 0;
 
-                        if (userReactions.containsKey(reactionType)) {
-                            userReactions.remove(reactionType);
-                        } else {
-                            userReactions.put(reactionType, true);
+                        if ("support".equals(reactionType)) {
+                            oldCount = holder.supportCount.getText().toString().isEmpty() ? 0 :
+                                    Integer.parseInt(holder.supportCount.getText().toString());
+                            newCount = supportCountData != null ? supportCountData.getCount() : oldCount;
+                            holder.supportCount.setText(String.valueOf(newCount));
+                        } else if ("affected".equals(reactionType)) {
+                            oldCount = holder.affectedCount.getText().toString().isEmpty() ? 0 :
+                                    Integer.parseInt(holder.affectedCount.getText().toString());
+                            newCount = affectedCountData != null ? affectedCountData.getCount() : oldCount;
+                            holder.affectedCount.setText(String.valueOf(newCount));
+                        } else if ("not_sure".equals(reactionType)) {
+                            oldCount = holder.notSureCount.getText().toString().isEmpty() ? 0 :
+                                    Integer.parseInt(holder.notSureCount.getText().toString());
+                            newCount = notSureCountData != null ? notSureCountData.getCount() : oldCount;
+                            holder.notSureCount.setText(String.valueOf(newCount));
+                        } else if ("invalid".equals(reactionType)) {
+                            oldCount = holder.invalidCount.getText().toString().isEmpty() ? 0 :
+                                    Integer.parseInt(holder.invalidCount.getText().toString());
+                            newCount = invalidCountData != null ? invalidCountData.getCount() : oldCount;
+                            holder.invalidCount.setText(String.valueOf(newCount));
+                        } else if ("fixed".equals(reactionType)) {
+                            oldCount = holder.fixedCount.getText().toString().isEmpty() ? 0 :
+                                    Integer.parseInt(holder.fixedCount.getText().toString());
+                            newCount = fixedCountData != null ? fixedCountData.getCount() : oldCount;
+                            holder.fixedCount.setText(String.valueOf(newCount));
                         }
 
-                        Toast.makeText(context, "Reaction " + (userReactions.containsKey(reactionType) ? "added" : "removed"), Toast.LENGTH_SHORT).show();
+                        // --- Compare after update ---
+                        if (newCount > oldCount) {
+                            Toast.makeText(context, "Reaction added", Toast.LENGTH_SHORT).show();
+                        } else if (newCount < oldCount) {
+                            Toast.makeText(context, "Reaction removed", Toast.LENGTH_SHORT).show();
+                        }
+
                     } else {
                         Log.e(TAG, "Failed reaction response: Status = " + reactionResponse.getStatus());
                         Toast.makeText(context, "Failed to add reaction", Toast.LENGTH_SHORT).show();
@@ -317,6 +342,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             }
         });
     }
+
 
     @Override
     public int getItemCount() {

@@ -270,6 +270,8 @@ public class ItemPostActivity extends AppCompatActivity {
 
     private void addReaction(int issueId, String reactionType) {
         Log.d(TAG, "Attempting to add reaction: type=" + reactionType + ", issueId=" + issueId);
+
+        // ✅ Reaction limit check
         if (userReactions.size() >= 2 && !userReactions.containsKey(reactionType)) {
             Log.d(TAG, "Reaction limit reached: " + userReactions.size());
             Toast.makeText(this, "You can only add up to 2 reactions per post", Toast.LENGTH_SHORT).show();
@@ -285,35 +287,107 @@ public class ItemPostActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ReactionResponse> call, Response<ReactionResponse> response) {
                 Log.d(TAG, "API response received: code=" + response.code());
+
                 if (response.isSuccessful() && response.body() != null) {
                     ReactionResponse reactionResponse = response.body();
                     Log.d(TAG, "API Response: " + reactionResponse.toString());
+
                     if ("success".equals(reactionResponse.getStatus())) {
-                        TextView supportCount = findViewById(R.id.supportCount);
-                        TextView affectedCount = findViewById(R.id.affectedCount);
-                        TextView notSureCount = findViewById(R.id.notSureCount);
-                        TextView invalidCount = findViewById(R.id.invalidCount);
-                        TextView fixedCount = findViewById(R.id.fixedCount);
+                        // ✅ Map UI TextViews and Icons
+                        Map<String, TextView> reactionViews = new HashMap<>();
+                        reactionViews.put("support", findViewById(R.id.supportCount));
+                        reactionViews.put("affected", findViewById(R.id.affectedCount));
+                        reactionViews.put("not_sure", findViewById(R.id.notSureCount));
+                        reactionViews.put("invalid", findViewById(R.id.invalidCount));
+                        reactionViews.put("fixed", findViewById(R.id.fixedCount));
 
-                        ReactionResponse.ReactionCount supportCountData = reactionResponse.getReactionCounts().get("support");
-                        ReactionResponse.ReactionCount affectedCountData = reactionResponse.getReactionCounts().get("affected");
-                        ReactionResponse.ReactionCount notSureCountData = reactionResponse.getReactionCounts().get("not_sure");
-                        ReactionResponse.ReactionCount invalidCountData = reactionResponse.getReactionCounts().get("invalid");
-                        ReactionResponse.ReactionCount fixedCountData = reactionResponse.getReactionCounts().get("fixed");
+                        Map<String, ImageView> reactionIcons = new HashMap<>();
+                        reactionIcons.put("support", findViewById(R.id.supportIcon));
+                        reactionIcons.put("affected", findViewById(R.id.affectedIcon));
+                        reactionIcons.put("not_sure", findViewById(R.id.notSureIcon));
+                        reactionIcons.put("invalid", findViewById(R.id.invalidIcon));
+                        reactionIcons.put("fixed", findViewById(R.id.fixedIcon));
 
-                        if (supportCountData != null) supportCount.setText(String.valueOf(supportCountData.getCount()));
-                        if (affectedCountData != null) affectedCount.setText(String.valueOf(affectedCountData.getCount()));
-                        if (notSureCountData != null) notSureCount.setText(String.valueOf(notSureCountData.getCount()));
-                        if (invalidCountData != null) invalidCount.setText(String.valueOf(invalidCountData.getCount()));
-                        if (fixedCountData != null) fixedCount.setText(String.valueOf(fixedCountData.getCount()));
-
-                        if (userReactions.containsKey(reactionType)) {
-                            userReactions.remove(reactionType);
-                        } else {
-                            userReactions.put(reactionType, true);
+                        // ✅ Capture old count for clicked reaction BEFORE updating UI
+                        TextView clickedView = reactionViews.get(reactionType);
+                        int oldCount = 0;
+                        if (clickedView != null) {
+                            try {
+                                oldCount = Integer.parseInt(clickedView.getText().toString());
+                            } catch (NumberFormatException e) {
+                                Log.w(TAG, "Invalid old count format, defaulting to 0");
+                            }
                         }
 
-                        Toast.makeText(ItemPostActivity.this, "Reaction " + (userReactions.containsKey(reactionType) ? "added" : "removed"), Toast.LENGTH_SHORT).show();
+                        // ✅ Update all counts
+                        Map<String, ReactionResponse.ReactionCount> reactionData = reactionResponse.getReactionCounts();
+                        for (Map.Entry<String, TextView> entry : reactionViews.entrySet()) {
+                            String type = entry.getKey();
+                            TextView view = entry.getValue();
+                            ReactionResponse.ReactionCount countData = reactionData.get(type);
+
+                            if (countData != null) {
+                                view.setText(String.valueOf(countData.getCount()));
+                            }
+
+                            // ✅ Update icon based on userReactions
+                            ImageView icon = reactionIcons.get(type);
+                            if (icon != null) {
+                                if (userReactions.containsKey(type)) {
+                                    switch (type) {
+                                        case "support":
+                                            icon.setImageResource(R.drawable.support_given);
+                                            break;
+                                        case "affected":
+                                            icon.setImageResource(R.drawable.affected_given);
+                                            break;
+                                        case "not_sure":
+                                            icon.setImageResource(R.drawable.notsure_given);
+                                            break;
+                                        case "invalid":
+                                            icon.setImageResource(R.drawable.invalid_given);
+                                            break;
+                                        case "fixed":
+                                            icon.setImageResource(R.drawable.fixed_given);
+                                            break;
+                                    }
+                                } else {
+                                    switch (type) {
+                                        case "support":
+                                            icon.setImageResource(R.drawable.support_gray);
+                                            break;
+                                        case "affected":
+                                            icon.setImageResource(R.drawable.affected_gray);
+                                            break;
+                                        case "not_sure":
+                                            icon.setImageResource(R.drawable.not_sure_gray);
+                                            break;
+                                        case "invalid":
+                                            icon.setImageResource(R.drawable.invalid_gray);
+                                            break;
+                                        case "fixed":
+                                            icon.setImageResource(R.drawable.fixed_gray);
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+
+                        // ✅ Compare new count for clicked reaction
+                        if (clickedView != null) {
+                            int newCount = reactionData.get(reactionType) != null
+                                    ? reactionData.get(reactionType).getCount()
+                                    : oldCount;
+
+                            if (newCount > oldCount) {
+                                Toast.makeText(ItemPostActivity.this, "Reaction added", Toast.LENGTH_SHORT).show();
+                                userReactions.put(reactionType, true);
+                            } else if (newCount < oldCount) {
+                                Toast.makeText(ItemPostActivity.this, "Reaction removed", Toast.LENGTH_SHORT).show();
+                                userReactions.remove(reactionType);
+                            }
+                        }
+
                     } else {
                         Log.e(TAG, "Failed reaction response: Status = " + reactionResponse.getStatus());
                         Toast.makeText(ItemPostActivity.this, "Failed to add reaction", Toast.LENGTH_SHORT).show();
@@ -331,4 +405,7 @@ public class ItemPostActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
 }

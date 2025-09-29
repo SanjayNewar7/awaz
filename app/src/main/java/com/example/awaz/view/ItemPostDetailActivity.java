@@ -359,13 +359,13 @@ public class ItemPostDetailActivity extends AppCompatActivity {
             } else if (createdAt.contains("minute")) {
                 createdAt = createdAt.replace("minute", "min");
             } else if (createdAt.contains("hour")) {
-                createdAt = createdAt.replace("hour", "hr");
+                createdAt = createdAt.replace("hour", "hour");
             } else if (createdAt.contains("week")) {
-                createdAt = createdAt.replace("week", "wk");
+                createdAt = createdAt.replace("week", "week");
             } else if (createdAt.contains("month")) {
-                createdAt = createdAt.replace("month", "mo");
+                createdAt = createdAt.replace("month", "month");
             } else if (createdAt.contains("year")) {
-                createdAt = createdAt.replace("year", "yr");
+                createdAt = createdAt.replace("year", "year");
             }
 
             return createdAt; // Return normalized relative time

@@ -115,75 +115,233 @@
                 android:textSize="12dp"
                 android:layout_marginBottom="16dp" />
 
-            <!-- District Label -->
+            <!-- Location Method Selection -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Please Select the District where you want Report Issue"
+                android:text="Select how you want to provide location"
                 android:textSize="14sp"
                 android:textColor="@color/black"
                 android:layout_marginBottom="8dp" />
-            <Spinner
-                android:id="@+id/spinnerDistrict"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp"
-                android:textSize="14sp"
-                android:layout_marginBottom="16dp" />
 
-            <!-- Region Type Label -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select your Region Type"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="8dp" />
-            <Spinner
-                android:id="@+id/spinnerRegionType"
+            <RadioGroup
+                android:id="@+id/locationMethodGroup"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp"
-                android:textSize="12dp"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
 
-            <!-- Ward Label -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Please Select the Ward where you want Report Issue"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="8dp" />
-            <Spinner
-                android:id="@+id/spinnerWard"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp"
-                android:textSize="12dp"
-                android:layout_marginBottom="16dp" />
+                <RadioButton
+                    android:id="@+id/radioManualLocation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Manual Location Entry"
+                    android:textSize="14sp"
+                    android:checked="true" />
 
-            <!-- Area Name Label -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Please Provide name of your area"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="8dp" />
-            <EditText
-                android:id="@+id/editAreaName"
+                <RadioButton
+                    android:id="@+id/radioMapLocation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Google Map Pin"
+                    android:textSize="14sp" />
+            </RadioGroup>
+
+            <!-- Manual Location Section (Default Visible) -->
+            <LinearLayout
+                android:id="@+id/manualLocationSection"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:hint="e.g., Ramghat"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp"
-                android:textSize="16sp"
-                android:inputType="text"
-                android:layout_marginBottom="16dp" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <!-- District Label -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please Select the District where you want Report Issue"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="8dp" />
+                <Spinner
+                    android:id="@+id/spinnerDistrict"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Region Type Label -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select your Region Type"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="8dp" />
+                <Spinner
+                    android:id="@+id/spinnerRegionType"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:textSize="12dp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Ward Label -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please Select the Ward where you want Report Issue"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="8dp" />
+                <Spinner
+                    android:id="@+id/spinnerWard"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:textSize="12dp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Area Name Label -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please Provide name of your area"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="8dp" />
+                <EditText
+                    android:id="@+id/editAreaName"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="e.g., Ramghat"
+                    android:background="@drawable/edittext_background"
+                    android:padding="12dp"
+                    android:textSize="16sp"
+                    android:inputType="text"
+                    android:layout_marginBottom="16dp" />
+            </LinearLayout>
+
+            <!-- Google Map Location Section (Hidden by Default) -->
+            <LinearLayout
+                android:id="@+id/mapLocationSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pin your issue location on the map"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Map Container -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:background="@drawable/edittext_background"
+                    android:layout_marginBottom="12dp">
+
+                    <!-- Map Fragment will be added here programmatically -->
+                    <FrameLayout
+                        android:id="@+id/mapContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <!-- Location Pin -->
+                    <ImageView
+                        android:id="@+id/locationPin"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_location_pin"
+                        android:layout_centerInParent="true"
+                        android:visibility="gone" />
+
+                    <!-- Instructions Overlay -->
+                    <TextView
+                        android:id="@+id/mapInstructions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap anywhere on map to place location pin"
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:background="@color/black_50_transparent"
+                        android:padding="8dp"
+                        android:layout_centerInParent="true" />
+                </RelativeLayout>
+
+                <!-- Selected Location Info -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/light_gray"
+                    android:padding="12dp"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Selected Location Details"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="4dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Coordinates:"
+                            android:textSize="12sp"
+                            android:textColor="@color/black"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:id="@+id/txtSelectedCoordinates"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Not selected"
+                            android:textSize="12sp"
+                            android:textColor="@color/gray"
+                            android:textStyle="italic" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/txtAddressFromMap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Address will appear here after pin placement"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- Current Location Button -->
+                <Button
+                    android:id="@+id/btnCurrentLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="Use My Current Location"
+                    android:background="@drawable/button_rounded_outline"
+                    android:textColor="@color/blue"
+                    android:layout_marginBottom="8dp" />
+            </LinearLayout>
 
             <!-- Photo Upload Label -->
             <TextView
